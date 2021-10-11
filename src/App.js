@@ -9,7 +9,9 @@ import { QuestionScreen } from './screens/QuestionScreen/QuestionScreen';
 import PassScreen from './screens/PassScreen';
 import EliminatedScreen from './screens/EliminatedScreen';
 
-var exampleSocket = new WebSocket("ws://localhost:8080", []);
+const local = "ws://localhost:8080";
+const prod = "ws://squid.azurewebsites.net";
+var exampleSocket = new WebSocket(local, []);
 
 const Container = styled.div`
   width: 1200px;
