@@ -1,7 +1,7 @@
-import { WebSocketServer } from "ws";
+import { WebSocketServer, WebSocket } from "ws";
 
 const wss = new WebSocketServer({ port: 8080 });
-const questionTimeout = 60000;
+const questionTimeout = 2000;
 const maxPlayerCount = 1;
 const questions = [
   {
@@ -82,7 +82,7 @@ wss.on("connection", function connection(ws) {
             });
             setTimeout(() => {
               gameState.clients.forEach(c => {
-                if (!validateSubmission(c)) {
+                if (!validateSubmissions(c)) {
                   c.state = "Lost";
                 }
               });
