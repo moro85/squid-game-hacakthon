@@ -4,5 +4,5 @@ export const serverState = {
 }
 
 export const serverType = {
-    "STATUS": "status"
+    "STATUS": "Status"
 }
