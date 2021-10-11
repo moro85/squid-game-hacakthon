@@ -1,23 +1,25 @@
 import express from "express";
 import { WebSocketServer, WebSocket } from "ws";
+import { VM } from "vm2";
+
 const app = express();
 const server = app.listen(process.env.PORT || 8080);
 
 const messageState = {
-  "WAITING_START": "WaitingStart",
-  "QUESTION": "Question",
-  "PASSED": "Passed",
-  "ELIMINATED": "Eliminated",
-  "GAME_OVER": "GameOver",
-  "PLAYER_ALREADY_JOINED": "PlayerAlreadyJoined",
-  "GAME_ALREADY_STARTED": "GameAlreadyStarted",
-}
+  WAITING_START: "WaitingStart",
+  QUESTION: "Question",
+  PASSED: "Passed",
+  ELIMINATED: "Eliminated",
+  GAME_OVER: "GameOver",
+  PLAYER_ALREADY_JOINED: "PlayerAlreadyJoined",
+  GAME_ALREADY_STARTED: "GameAlreadyStarted"
+};
 
 const messageType = {
-  "STATUS": "Status",
-  "JOIN": "Join",
-  "SUBMIT": "Submit"
-}
+  STATUS: "Status",
+  JOIN: "Join",
+  SUBMIT: "Submit"
+};
 
 const wss = new WebSocketServer({ server });
 // this will make Express serve your static files
@@ -26,12 +28,23 @@ app.get("/", function(req, res) {
   res.sendFile("./build-client/index.html");
 });
 
+function runCodeIsolated(code, params) {
+  const vm = new VM({
+    timeout: 1000,
+    sandbox: {}
+  });
+
+  return vm.run(`(${code})(${params})`);
+}
+
 const questionTimeout = 10000;
-const maxPlayerCount = 3;
+const maxPlayerCount = 1;
 const questions = [
   {
-    description: "1",
-    validators: [() => true]
+    description:
+      "Write a function that accepts an array of native numbers as a parameter and returns the sum of multiplication of every two adjacent cells",
+    validators: [code => runCodeIsolated(code, `[1,2,3]`) === 8],
+    codeTemplate: "(arr) => { }"
   },
   {
     description: "2",
@@ -85,7 +98,8 @@ function playNextQuestion() {
             qNum: gameState.currentQuestion,
             totalQ: questions.length,
             description: questions[gameState.currentQuestion].description,
-            timeLeft: questionTimeout
+            timeLeft: questionTimeout,
+            codeTemplate: questions[gameState.currentQuestion].codeTemplate
           })
         );
       }
@@ -142,7 +156,10 @@ wss.on("connection", function connection(ws) {
       case "Join":
         if (gameState.state !== "NotStarted") {
           ws.send(
-            JSON.stringify({ type: messageType.STATUS, state: messageState.GAME_ALREADY_STARTED })
+            JSON.stringify({
+              type: messageType.STATUS,
+              state: messageState.GAME_ALREADY_STARTED
+            })
           );
           return;
         }
@@ -154,7 +171,10 @@ wss.on("connection", function connection(ws) {
           )
         ) {
           ws.send(
-            JSON.stringify({ type: messageType.STATUS, state: messageState.PLAYER_ALREADY_JOINED })
+            JSON.stringify({
+              type: messageType.STATUS,
+              state: messageState.PLAYER_ALREADY_JOINED
+            })
           );
         } else {
           gameState.clients.push({
@@ -192,10 +212,20 @@ wss.on("connection", function connection(ws) {
               questions[gameState.currentQuestion]
             )
           ) {
-            ws.send(JSON.stringify({ type: messageType.STATUS, state: messageState.PASSED }));
+            ws.send(
+              JSON.stringify({
+                type: messageType.STATUS,
+                state: messageState.PASSED
+              })
+            );
           } else {
             gameState.clients.find(c => c.id === ws.id).status = "Lost";
-            ws.send(JSON.stringify({ type: messageType.STATUS, state: messageState.ELIMINATED }));
+            ws.send(
+              JSON.stringify({
+                type: messageType.STATUS,
+                state: messageState.ELIMINATED
+              })
+            );
           }
         }
         break;
