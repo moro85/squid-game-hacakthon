@@ -5,6 +5,7 @@ import './animate.css'
 import MainScreen from './screens/MainScreen';
 import GetReadyScreen from './screens/GetReadyScreen';
 import { messageState, messageType } from './utils/constants';
+import { playSound, NEW_PLAYER_SOUND } from './utils/sound';
 import { QuestionScreen } from './screens/QuestionScreen/QuestionScreen';
 import PassScreen from './screens/PassScreen';
 import EliminatedScreen from './screens/EliminatedScreen';
@@ -50,7 +51,8 @@ function App() {
             switch (msg.state) {
               case messageState.WAITING_START:
                 setPlayers(msg.players);
-                // Play pop sound here
+                playSound(NEW_PLAYER_SOUND);
+                console.log('played sound!')
                 break;
               case messageState.QUESTION: 
                 setGameStatus(GAME_STATES.STARTED);
