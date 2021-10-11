@@ -27,12 +27,6 @@ function App() {
 
   useEffect(() => {
     exampleSocket.onopen = function (event) {
-      var msg = {
-        type: "Join",
-        playerName: Math.random().toString()
-      };
-      exampleSocket.send(JSON.stringify(msg));
-      
       exampleSocket.onmessage = function (event) {
         const msg = JSON.parse(event.data);
         if ( msg.type === "Status" ) {
@@ -42,14 +36,20 @@ function App() {
     };
   }, [])
 
-  const changeGameStatus = (newGameStatus) => {
+  const changeGameStatus = (newGameStatus, setWaiting, playerName) => {
     setGameStatus(newGameStatus);
+    var msg = {
+      type: "Join",
+      playerName
+    };
+    exampleSocket.send(JSON.stringify(msg));
+    setWaiting(true);
   }
 
   return (
     <div className="App">
       <Container>
-        {gameStatus === GAME_STATES.WAITING && <MainScreen players={players} startGame={() => changeGameStatus(GAME_STATES.GET_READY)} />}
+        {gameStatus === GAME_STATES.WAITING && <MainScreen socket={exampleSocket} players={players} startGame={(setWaiting, playerName) => changeGameStatus(GAME_STATES.WAITING, setWaiting, playerName)} />}
         {gameStatus === GAME_STATES.GET_READY && <GetReadyScreen />}
       </Container>
     </div>

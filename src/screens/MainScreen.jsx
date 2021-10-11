@@ -22,7 +22,6 @@ const JoinGamebutton = styled.button`
     color: #fff;
     border: 0;
     font-size: 34px;
-    margin-top: 2em;
     cursor: pointer;
     transition: .18s all;
     &:hover {
@@ -62,17 +61,35 @@ const MainScreenLog = styled.div`
 `;
 
 const PlayerNameInput = styled.input`
+    margin-bottom: 1em;
+    margin-top: 1em;
+    border: 0;
+    outline: none;
+    text-align: center;
+    padding: .5em;
+    border-bottom: 3px solid ${colors.squidGamePink};
+    font-size: 35px;
+    border-top-right-radius: 8px;
+    border-top-left-radius: 8px;
+`;
 
+const GameAboutToStart = styled.div`
+    font-size: 30px;
 `;
 
 
 const MainScreen = ({startGame, players}) => {
 
+    const [waiting, setWaiting] = useState(false)
+    const [player, setPlayer] = useState("");
+
+
     return (
         <StyledMainScreen>
             <SquidGameLogo src="./assets/sg_logo.png" alt="" />
-            <PlayerNameInput />
-            <JoinGamebutton onClick={() => startGame()}>Join Game</JoinGamebutton>
+            { !waiting && <PlayerNameInput placeholder="Enter your name" onInput={(e) => {setPlayer(e.target.value)}} /> }
+            { !waiting && <JoinGamebutton onClick={() => startGame(setWaiting, player)}>Join Game</JoinGamebutton> }
+            { waiting && <GameAboutToStart>{player}, Game about to start...</GameAboutToStart>}
             <MainScreenLog>
                 <ul>
                     {players && players.slice(-2).map((v)=>
