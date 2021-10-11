@@ -1,5 +1,6 @@
 import styled from 'styled-components'
 import './App.css';
+import './animate.css'
 import MainScreen from './screens/MainScreen';
 
 const Container = styled.div`

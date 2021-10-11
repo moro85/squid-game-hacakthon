@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import styled from 'styled-components';
 import { colors } from '../utils/colors';
 
@@ -23,6 +23,11 @@ const JoinGamebutton = styled.button`
     border: 0;
     font-size: 34px;
     margin-top: 2em;
+    cursor: pointer;
+    transition: .18s all;
+    &:hover {
+        transform: scale(1.1);
+    }
 `;
 
 const MainScreenLog = styled.div`
@@ -35,8 +40,13 @@ const MainScreenLog = styled.div`
         list-style-type: none;
         padding: 0;
         margin: 0;
+        display: flex;
+        flex-direction: column-reverse;
         li {
             text-align: center;
+            &:not(:first-of-type) {
+                margin: .5em 0;
+            }
         }
     }
     &::after {
@@ -51,14 +61,26 @@ const MainScreenLog = styled.div`
     }
 `;
 
+
 const MainScreen = () => {
+
+    const [logs, setLogs] = useState([])
+
+    useEffect(() => {
+        setInterval(()=>{
+            setLogs((logs)=>[...logs, Math.floor(Math.random() * (456 - 1) + 1)])
+        },1000)
+    }, [])
+
     return (
         <StyledMainScreen>
             <SquidGameLogo src="./assets/sg_logo.png" alt="" />
             <JoinGamebutton>Join Game</JoinGamebutton>
             <MainScreenLog>
                 <ul>
-                    <li>Player 005 Joined</li>
+                    {logs.slice(-2).map((v)=>
+                        (<li key={v} className="animate__animated animate__bounceIn">Player {(v < 100 && v > 10) ? `0${v}` : (v < 10) ? `00${v}` : v} Joined</li>)
+                    )}
                 </ul>
             </MainScreenLog>
         </StyledMainScreen>
