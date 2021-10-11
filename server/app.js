@@ -1,12 +1,14 @@
-import websocket from "ws";
 import express from 'express';
-import { WebSocketServer } from 'ws';
+import { WebSocketServer, WebSocket } from 'ws';
 const app = express();
 const server = app.listen(process.env.PORT || 8080);
 
 const wss = new WebSocketServer({ server });
 // this will make Express serve your static files
-app.use(express.static('./public'));
+app.use(express.static('./build-client'));
+app.get('/', function(req, res) {
+  res.sendFile('./build-client/index.html');
+});
 
 const questionTimeout = 10000;
 const maxPlayerCount = 10;
@@ -56,7 +58,7 @@ function resetGame() {
 
 function playNextQuestion() {
   wss.clients.forEach(function each(client) {
-    if (client.readyState === websocket.WebSocket.OPEN) {
+    if (client.readyState === WebSocket.OPEN) {
       client.send(
         JSON.stringify({
           type: "Question",
@@ -78,7 +80,7 @@ function playNextQuestion() {
     if (gameState.currentQuestion === questions.length) {
       gameState.state = "GameOver";
       wss.clients.forEach(function each(client) {
-        if (client.readyState === websocket.WebSocket.OPEN) {
+        if (client.readyState === WebSocket.OPEN) {
           client.send(
             JSON.stringify({
               type: "Status",
@@ -151,7 +153,7 @@ wss.on("connection", function connection(ws) {
             playNextQuestion();
           } else {
             wss.clients.forEach(function each(client) {
-              if (client.readyState === websocket.WebSocket.OPEN) {
+              if (client.readyState === WebSocket.OPEN) {
                 client.send(
                   JSON.stringify({
                     type: "Status",
