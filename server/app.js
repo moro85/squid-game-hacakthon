@@ -5,9 +5,13 @@ const questionTimeout = 10000;
 const maxPlayerCount = 1;
 const questions = [
   {
-    description: "",
+    description: "1",
     validators: [() => true]
-  }
+  },
+  {
+    description: "2",
+    validators: [() => true]
+  }  
 ];
 const gameState = {
   clients: [],
@@ -33,6 +37,52 @@ function validateSubmissions(client) {
   return false;
 }
 
+function playNextQuestion() {
+  wss.clients.forEach(function each(client) {
+    if (client.readyState === WebSocket.OPEN) {
+      client.send(
+        JSON.stringify({
+          type: "Question",
+          qNum: gameState.currentQuestion,
+          totalQ: questions.length,
+          description: questions[gameState.currentQuestion].description,
+          timeLeft: questionTimeout
+        })
+      );
+    }
+  });
+  setTimeout(() => {
+    gameState.clients.forEach(c => {
+      if (!validateSubmissions(c)) {
+        c.status = "Lost";
+      }
+    });
+    gameState.currentQuestion++;
+    if (gameState.currentQuestion === questions.length) {
+      gameState.state = "GameOver";
+      wss.clients.forEach(function each(client) {
+        if (client.readyState === WebSocket.OPEN) {
+          client.send(
+            JSON.stringify({
+              type: "Status",
+              state: "GameOver",
+              winners: gameState.clients
+                .filter(c => c.status === "Playing")
+                .map(c => c.playerName),
+              losers: gameState.clients
+                .filter(c => c.status === "Lost")
+                .map(c => c.playerName)
+            })
+          );
+          client.close();
+        }
+      });
+    } else {
+      playNextQuestion();
+    }
+  }, questionTimeout);
+}
+
 wss.on("connection", function connection(ws) {
   ws.id = wss.getUniqueID();
   ws.on("message", function incoming(message) {
@@ -44,6 +94,7 @@ wss.on("connection", function connection(ws) {
           ws.send(
             JSON.stringify({ type: "Status", state: "GameAlreadyStarted" })
           );
+          return;
         }
         if (
           gameState.clients.some(
@@ -64,56 +115,19 @@ wss.on("connection", function connection(ws) {
           });
           if (gameState.clients.length === maxPlayerCount) {
             gameState.state = "Started";
+            playNextQuestion();
+          } else {
             wss.clients.forEach(function each(client) {
               if (client.readyState === WebSocket.OPEN) {
                 client.send(
                   JSON.stringify({
-                    type: "Question",
-                    qNum: gameState.currentQuestion,
-                    totalQ: questions.length,
-                    description:
-                      questions[gameState.currentQuestion].description,
-                    timeLeft: questionTimeout
+                    type: "Status",
+                    state: "WaitingStart",
+                    players: gameState.clients.map(c => c.playerName)
                   })
                 );
               }
             });
-            setTimeout(() => {
-              gameState.clients.forEach(c => {
-                if (!validateSubmissions(c)) {
-                  c.status = "Lost";
-                }
-              });
-              gameState.currentQuestion++;
-              if (gameState.currentQuestion === questions.length) {
-                gameState.state = "GameOver";
-                wss.clients.forEach(function each(client) {
-                  if (client.readyState === WebSocket.OPEN) {
-                    client.send(
-                      JSON.stringify({
-                        type: "Status",
-                        state: "GameOver",
-                        winners: gameState.clients
-                          .filter(c => c.status === "Playing")
-                          .map(c => c.playerName),
-                        losers: gameState.clients
-                          .filter(c => c.status === "Lost")
-                          .map(c => c.playerName)
-                      })
-                    );
-                    client.close();
-                  }
-                });
-              }
-            }, questionTimeout);
-          } else {
-            ws.send(
-              JSON.stringify({
-                type: "Status",
-                state: "WaitingStart",
-                players: gameState.clients.map(c => c.playerName)
-              })
-            );
           }
         }
         break;
