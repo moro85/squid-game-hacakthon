@@ -1,10 +1,6 @@
 import styled from 'styled-components';
 import { colors } from '../../utils/colors';
 
-export const QuestionContainer = styled.div`
-    display: flex;
-`;
-
 export const StyledQuestionScreen = styled.div`
     display: flex;
     justify-content: center;
@@ -44,6 +40,7 @@ export const StyledQuestionScreen = styled.div`
 `;
 
 export const StyledQuestionSubmitButton = styled.button`
+    margin-top: 16px;
     background: #fff;
     padding: .5em 1em;
     border: 0;
@@ -52,4 +49,15 @@ export const StyledQuestionSubmitButton = styled.button`
     &:hover {
         cursor: pointer;
     }
+`;
+
+export const EditorContainer = styled.div`
+    background: #000;
+    width: 500px;
+    height: 300px;
+    border-radius: 4px;
+  
+  .token .operator {
+    background: #000;
+  }
 `;

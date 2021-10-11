@@ -31,7 +31,7 @@ function App() {
 
   const [gameStatus, setGameStatus] = useState(GAME_STATES.WAITING);
   const [players, setPlayers] = useState([]);
-  
+
   const submitAnswer = (answer) => {
     const msg = {
       type: 'Submit',
@@ -46,16 +46,16 @@ function App() {
       exampleSocket.onmessage = function (event) {
         const msg = JSON.parse(event.data);
         console.log(msg);
-          if ( msg.type === serverType.STATUS ) { 
+          if ( msg.type === serverType.STATUS ) {
             switch (msg.state) {
               case serverState.WAITING_START:
                 setPlayers(msg.players);
                 // Play pop sound here
                 break;
-              case serverState.QUESTION: 
+              case serverState.QUESTION:
                 setGameStatus(GAME_STATES.STARTED);
                 break;
-              case serverState.PASSED: 
+              case serverState.PASSED:
                 setGameStatus(GAME_STATES.PASSED);
                 break;
               case serverState.ELIMINATED:
@@ -80,7 +80,6 @@ function App() {
   return (
     <div className="App">
       <Container>
-        {/* <QuestionScreen submitAnswer={submitAnswer} /> */}
         {gameStatus === GAME_STATES.WAITING && <MainScreen socket={exampleSocket} players={players} startGame={(setWaiting, playerName) => changeGameStatus(GAME_STATES.WAITING, setWaiting, playerName)} />}
         {gameStatus === GAME_STATES.GET_READY && <GetReadyScreen />}
         {gameStatus === GAME_STATES.STARTED && <QuestionScreen submitAnswer={() => submitAnswer()} />}
