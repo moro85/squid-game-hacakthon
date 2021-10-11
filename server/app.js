@@ -1,12 +1,12 @@
 import { WebSocketServer, WebSocket } from "ws";
 
 const wss = new WebSocketServer({ port: 8080 });
-const questionTimeout = 2000;
+const questionTimeout = 10000;
 const maxPlayerCount = 1;
 const questions = [
   {
     description: "",
-    validators: [() => {}]
+    validators: [() => true]
   }
 ];
 const gameState = {
@@ -25,12 +25,9 @@ wss.getUniqueID = function() {
 };
 
 function validateSubmissions(client) {
-  if (
-    client.submissions[gameState.currentQuestion] &&
-    client.submissions[gameState.currentQuestion].code
-  ) {
-    return questions[currentQuestion].validators.every(validator =>
-      validator(client.submissions[gameState.currentQuestion].code)
+  if (client.submissions[gameState.currentQuestion]) {
+    return questions[gameState.currentQuestion].validators.every(validator =>
+      validator(client.submissions[gameState.currentQuestion])
     );
   }
   return false;
@@ -66,12 +63,13 @@ wss.on("connection", function connection(ws) {
             id: ws.id
           });
           if (gameState.clients.length === maxPlayerCount) {
+            gameState.state = "Started";
             wss.clients.forEach(function each(client) {
               if (client.readyState === WebSocket.OPEN) {
                 client.send(
                   JSON.stringify({
                     type: "Question",
-                    qNum: gameState.currentQuestion + 1,
+                    qNum: gameState.currentQuestion,
                     totalQ: questions.length,
                     description:
                       questions[gameState.currentQuestion].description,
@@ -83,11 +81,12 @@ wss.on("connection", function connection(ws) {
             setTimeout(() => {
               gameState.clients.forEach(c => {
                 if (!validateSubmissions(c)) {
-                  c.state = "Lost";
+                  c.status = "Lost";
                 }
               });
               gameState.currentQuestion++;
               if (gameState.currentQuestion === questions.length) {
+                gameState.state = "GameOver";
                 wss.clients.forEach(function each(client) {
                   if (client.readyState === WebSocket.OPEN) {
                     client.send(
@@ -95,10 +94,10 @@ wss.on("connection", function connection(ws) {
                         type: "Status",
                         state: "GameOver",
                         winners: gameState.clients
-                          .filter(c => c.state === "Playing")
+                          .filter(c => c.status === "Playing")
                           .map(c => c.playerName),
                         losers: gameState.clients
-                          .filter(c => c.state === "Lost")
+                          .filter(c => c.status === "Lost")
                           .map(c => c.playerName)
                       })
                     );
@@ -119,11 +118,13 @@ wss.on("connection", function connection(ws) {
         }
         break;
       case "Submit":
-        if (gameState.clients.find(c => c.id === ws.id).state == "Playing") {
-          gameState.clients.find(c => c.id === ws.id).submissions[
-            message.qNum
-          ] =
-            message.code;
+        if (gameState.state !== "NotStarted") {
+          if (gameState.clients.find(c => c.id === ws.id).status == "Playing") {
+            gameState.clients.find(c => c.id === ws.id).submissions[
+              message.qNum
+            ] =
+              message.code;
+          }
         }
         break;
       default:
