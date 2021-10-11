@@ -9,6 +9,7 @@ const messageState = {
   WAITING_START: "WaitingStart",
   QUESTION: "Question",
   PASSED: "Passed",
+  PLAYING: "Playing",
   ELIMINATED: "Eliminated",
   GAME_OVER: "GameOver",
   PLAYER_ALREADY_JOINED: "PlayerAlreadyJoined",
@@ -29,12 +30,18 @@ app.get("/", function(req, res) {
 });
 
 function runCodeIsolated(code, params) {
-  const vm = new VM({
-    timeout: 1000,
-    sandbox: {}
-  });
+  try {
+    const vm = new VM({
+      timeout: 1000,
+      sandbox: {}
+    });
 
-  return vm.run(`(${code})(${params})`);
+    return vm.run(`(${code})(${params})`);
+  } catch (error) {
+    console.log(error);
+  }
+  console.log('Ran runCodeIsolated');
+  return false;
 }
 
 const questionTimeout = 10000;
@@ -87,7 +94,8 @@ function playNextQuestion() {
   [...wss.clients]
     .filter(
       c =>
-        gameState.clients.find(client => client.id === c.id).status !== "Lost"
+        gameState.clients.find(client => client.id === c.id).status !==
+        messageState.ELIMINATED
     )
     .forEach(function each(client) {
       if (client.readyState === WebSocket.OPEN) {
@@ -103,6 +111,8 @@ function playNextQuestion() {
           })
         );
       }
+      gameState.clients.find(c => c.id === client.id).status =
+        messageState.PLAYING;
     });
   iterationHandle = setTimeout(() => {
     gameState.currentQuestion++;
@@ -115,10 +125,10 @@ function playNextQuestion() {
               type: messageType.STATUS,
               state: messageState.GAME_OVER,
               winners: gameState.clients
-                .filter(c => c.status === "Playing")
+                .filter(c => c.status === messageState.PASSED)
                 .map(c => c.playerName),
               losers: gameState.clients
-                .filter(c => c.status === "Lost")
+                .filter(c => c.status === messageState.ELIMINATED)
                 .map(c => c.playerName)
             })
           );
@@ -127,6 +137,24 @@ function playNextQuestion() {
       });
       resetGame();
     } else {
+      [...wss.clients]
+        .filter(
+          c =>
+            gameState.clients.find(client => client.id === c.id).status ===
+            messageState.PLAYING
+        )
+        .forEach(function each(client) {
+          if (client.readyState === WebSocket.OPEN) {
+            client.send(
+              JSON.stringify({
+                type: messageType.STATUS,
+                state: messageState.ELIMINATED
+              })
+            );
+          }
+          gameState.clients.find(c => c.id === client.id).status =
+            messageState.ELIMINATED;
+        });
       playNextQuestion();
     }
   }, questionTimeout);
@@ -150,7 +178,13 @@ wss.on("connection", function connection(ws) {
   });
 
   ws.on("message", function incoming(message) {
-    message = JSON.parse(message);
+    try {
+      message = JSON.parse(message);
+    } catch (error) {
+      console.log(error);
+      return;
+    }
+
     console.log(`Received message ${JSON.stringify(message)}`);
     switch (message.type) {
       case "Join":
@@ -179,7 +213,7 @@ wss.on("connection", function connection(ws) {
         } else {
           gameState.clients.push({
             playerName: message.playerName,
-            status: "Playing",
+            status: messageState.PLAYING,
             id: ws.id
           });
           if (gameState.clients.length === maxPlayerCount) {
@@ -204,7 +238,8 @@ wss.on("connection", function connection(ws) {
         if (
           gameState.state !== "NotStarted" &&
           message.qNum === gameState.currentQuestion &&
-          gameState.clients.find(c => c.id === ws.id).status !== "Lost"
+          gameState.clients.find(c => c.id === ws.id).status !==
+            messageState.ELIMINATED
         ) {
           if (
             validateSubmission(
@@ -212,6 +247,8 @@ wss.on("connection", function connection(ws) {
               questions[gameState.currentQuestion]
             )
           ) {
+            gameState.clients.find(c => c.id === ws.id).status =
+              messageState.PASSED;
             ws.send(
               JSON.stringify({
                 type: messageType.STATUS,
@@ -219,7 +256,8 @@ wss.on("connection", function connection(ws) {
               })
             );
           } else {
-            gameState.clients.find(c => c.id === ws.id).status = "Lost";
+            gameState.clients.find(c => c.id === ws.id).status =
+              messageState.ELIMINATED;
             ws.send(
               JSON.stringify({
                 type: messageType.STATUS,
