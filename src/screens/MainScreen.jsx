@@ -125,7 +125,7 @@ const MainScreen = ({startGame, players}) => {
             </MainScreenLog>
             { waiting && <Persons>
                 {players.map((v)=>
-                        <Person src={`./assets/person${Math.round(Math.random() * (4 - 1))}.png`} key={v} x={
+                        <Person src={`./assets/person${Math.round(Math.random() * (4 - 1) - 1)}.png`} key={v} x={
                         Math.floor(Math.random() * (1100 - 0) + 0)
                         } shouldFlip={Math.round(Math.random() * (1 - 0))} alt="" />
                     )
