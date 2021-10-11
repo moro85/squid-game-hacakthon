@@ -11,7 +11,7 @@ app.get("/", function(req, res) {
 });
 
 const questionTimeout = 10000;
-const maxPlayerCount = 1;
+const maxPlayerCount = 3;
 const questions = [
   {
     description: "1",
@@ -64,7 +64,8 @@ function playNextQuestion() {
       if (client.readyState === WebSocket.OPEN) {
         client.send(
           JSON.stringify({
-            type: "Question",
+            type: "Status",
+            state: "Question",
             qNum: gameState.currentQuestion,
             totalQ: questions.length,
             description: questions[gameState.currentQuestion].description,

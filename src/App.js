@@ -85,8 +85,6 @@ function App() {
         {gameStatus === GAME_STATES.STARTED && <QuestionScreen submitAnswer={() => submitAnswer()} />}
         {gameStatus === GAME_STATES.PASSED && <PassScreen playerLeftNumber={30} playerEliminatedNumber={5}/>}
         {gameStatus === GAME_STATES.ELIMINATED && <EliminatedScreen playerName={456} playerLeftNumber={20}/>}
-        <button onClick={() => changeGameStatus(GAME_STATES.PASSED)}>Pass</button>
-        <button onClick={() => changeGameStatus(GAME_STATES.ELIMINATED)}>Eliminated</button>
       </Container>
     </div>
   );
