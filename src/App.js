@@ -50,6 +50,7 @@ function App() {
             switch (msg.state) {
               case serverState.WAITING_START:
                 setPlayers(msg.players);
+                // Play pop sound here
                 break;
               case serverState.QUESTION: 
                 setGameStatus(GAME_STATES.STARTED);
