@@ -110,7 +110,7 @@ const MainScreen = ({startGame, players}) => {
     const inputRef = useRef();
 
     useEffect(() => {
-        inputRef.current.focus();
+        // inputRef.current.focus();
     }, []);
 
     return (
