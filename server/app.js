@@ -167,7 +167,8 @@ wss.on("connection", function connection(ws) {
       case "Submit":
         if (
           gameState.state !== "NotStarted" &&
-          message.qNum === gameState.currentQuestion
+          message.qNum === gameState.currentQuestion &&
+          gameState.clients.find(c => c.id === ws.id).status !== "Lost"
         ) {
           if (
             validateSubmission(
@@ -181,9 +182,6 @@ wss.on("connection", function connection(ws) {
             ws.send(JSON.stringify({ type: "Status", state: "Eliminated" }));
           }
         }
-        ws.send(
-           JSON.stringify({ type: "Status", state: Math.round(Math.random()) ? "Passed" : "Eliminated" })
-        );
         break;
       default:
         break;
