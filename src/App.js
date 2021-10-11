@@ -10,8 +10,8 @@ import { QuestionScreen } from './screens/QuestionScreen/QuestionScreen';
 import PassScreen from './screens/PassScreen';
 import EliminatedScreen from './screens/EliminatedScreen';
 
-const wsServer = window.location.host.replace("http://","ws://").replace("3000","8080").replace("localhost","ws://localhost");
-var exampleSocket = new WebSocket(wsServer, []);
+const wsServer = window.location.host.replace("http://","ws://").replace("3000","8080");
+var exampleSocket = new WebSocket(`ws://${wsServer}`, []);
 
 const Container = styled.div`
   width: 1200px;
