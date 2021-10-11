@@ -1,6 +1,15 @@
-import { WebSocketServer, WebSocket } from "ws";
+import express from 'express';
+import { WebSocketServer, WebSocket } from 'ws';
+const app = express();
+const server = app.listen(process.env.PORT || 8080);
 
-const wss = new WebSocketServer({ port: process.env.PORT || 3003 });
+const wss = new WebSocketServer({ server });
+// this will make Express serve your static files
+app.use(express.static('./build-client'));
+app.get('/', function(req, res) {
+  res.sendFile('./build-client/index.html');
+});
+
 const questionTimeout = 10000;
 const maxPlayerCount = 10;
 const questions = [
@@ -11,7 +20,7 @@ const questions = [
   {
     description: "2",
     validators: [() => true]
-  }  
+  }
 ];
 let gameState = {
   clients: [],
@@ -40,13 +49,12 @@ function validateSubmissions(client) {
 }
 
 function resetGame() {
-gameState = {
+  gameState = {
     clients: [],
     currentQuestion: 0,
     state: "NotStarted"
   };
 }
-
 
 function playNextQuestion() {
   wss.clients.forEach(function each(client) {
@@ -97,15 +105,18 @@ function playNextQuestion() {
 
 wss.on("connection", function connection(ws) {
   ws.id = wss.getUniqueID();
-  ws.on('close', function close() {
-    console.log('disconnected');
-    const client = gameState.clients.find(c=>c.id === ws.id);
+  ws.on("close", function close() {
+    console.log("disconnected");
+    const client = gameState.clients.find(c => c.id === ws.id);
     if (client) {
-        gameState.clients = gameState.clients.splice(gameState.clients.indexOf(client),1);
-        if (gameState.clients.length === 0) {
-            clearTimeout(iterationHandle);
-            resetGame();
-        }
+      gameState.clients = gameState.clients.splice(
+        gameState.clients.indexOf(client),
+        1
+      );
+      if (gameState.clients.length === 0) {
+        clearTimeout(iterationHandle);
+        resetGame();
+      }
     }
   });
 
