@@ -24,7 +24,7 @@ jobs:
       - name: npm install
         run: |
           npm install
-          npm run build
+          CI=false npm run build
           cp -R build server/client-build
           
       - name: npm install, build, and test
