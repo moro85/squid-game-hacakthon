@@ -1,10 +1,13 @@
-import { WebSocketServer, WebSocket } from "ws";
-import { createServer } from "http";
-import { parse } from "url";
+import websocket from "ws";
+import express from 'express';
+import { WebSocketServer } from 'ws';
+const app = express();
+const server = app.listen(process.env.PORT || 8080);
 
-const server = createServer();
+const wss = new WebSocketServer({ server });
+// this will make Express serve your static files
+app.use(express.static('./public'));
 
-const wss = new WebSocketServer({ noServer: true });
 const questionTimeout = 10000;
 const maxPlayerCount = 10;
 const questions = [
@@ -53,7 +56,7 @@ function resetGame() {
 
 function playNextQuestion() {
   wss.clients.forEach(function each(client) {
-    if (client.readyState === WebSocket.OPEN) {
+    if (client.readyState === websocket.WebSocket.OPEN) {
       client.send(
         JSON.stringify({
           type: "Question",
@@ -75,7 +78,7 @@ function playNextQuestion() {
     if (gameState.currentQuestion === questions.length) {
       gameState.state = "GameOver";
       wss.clients.forEach(function each(client) {
-        if (client.readyState === WebSocket.OPEN) {
+        if (client.readyState === websocket.WebSocket.OPEN) {
           client.send(
             JSON.stringify({
               type: "Status",
@@ -148,7 +151,7 @@ wss.on("connection", function connection(ws) {
             playNextQuestion();
           } else {
             wss.clients.forEach(function each(client) {
-              if (client.readyState === WebSocket.OPEN) {
+              if (client.readyState === websocket.WebSocket.OPEN) {
                 client.send(
                   JSON.stringify({
                     type: "Status",
@@ -176,17 +179,3 @@ wss.on("connection", function connection(ws) {
     }
   });
 });
-
-server.on("upgrade", function upgrade(request, socket, head) {
-    const { pathname } = parse(request.url);
-  
-    if (pathname === "/") {
-      wss.handleUpgrade(request, socket, head, function done(ws) {
-        wss.emit("connection", ws, request);
-      });
-    } else {
-      socket.destroy();
-    }
-  });  
-
-server.listen(process.env.PORT || 8080);
