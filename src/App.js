@@ -49,6 +49,7 @@ function App() {
           if ( msg.type === serverType.STATUS ) { 
             switch (msg.state) {
               case serverState.WAITING_START:
+                console.log( { 'msg.players': msg.players })
                 setPlayers(msg.players);
                 break;
               case serverState.QUESTION: 

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import styled from 'styled-components';
 import { colors } from '../utils/colors';
 
@@ -107,15 +107,18 @@ const MainScreen = ({startGame, players}) => {
 
     const [waiting, setWaiting] = useState(false)
     const [player, setPlayer] = useState("");
+    const inputRef = useRef();
 
+    useEffect(() => {
+        inputRef.current.focus();
+    }, []);
 
     return (
         <StyledMainScreen>
             <SquidGameLogo src="./assets/sg_logo.png" alt="" />
-            { !waiting && <PlayerNameInput autoComplete="false" placeholder="Enter your name" onInput={(e) => {setPlayer(e.target.value)}} /> }
+            { !waiting && <PlayerNameInput ref={inputRef} autoComplete="false" placeholder="Enter your name" onInput={(e) => setPlayer(e.target.value)} /> }
             { !waiting && <JoinGamebutton onClick={() => startGame(setWaiting, player)}>Join Game</JoinGamebutton> }
-            { waiting && <GameAboutToStart>{player}, Game about to start...</GameAboutToStart>}
-            { waiting && <PlayersWaiting><span>{players.length} players</span> are waiting with you</PlayersWaiting>}
+            { waiting && <PlayersWaiting>{players.length !== 1 ? <><span>{players.length - 1} players</span> {(players.length - 1) === 1 ? 'is' : 'are'} waiting with you</> : "Welcome to lobby. you are the first one. Make yourself at home until others join."}</PlayersWaiting>}
             <MainScreenLog>
                 <ul>
                     {players && players.slice(-2).map((v)=>
