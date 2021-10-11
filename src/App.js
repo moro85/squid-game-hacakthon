@@ -4,7 +4,7 @@ import './App.css';
 import './animate.css'
 import MainScreen from './screens/MainScreen';
 import GetReadyScreen from './screens/GetReadyScreen';
-import { serverState, serverType } from './utils/enum';
+import { messageState, messageType } from './utils/constants';
 import { QuestionScreen } from './screens/QuestionScreen/QuestionScreen';
 import PassScreen from './screens/PassScreen';
 import EliminatedScreen from './screens/EliminatedScreen';
@@ -34,7 +34,7 @@ function App() {
   
   const submitAnswer = (answer) => {
     const msg = {
-      type: 'Submit',
+      type: messageType.SUBMIT,
       qNum: 1,
       code: answer || 'sample answer'
     };
@@ -46,18 +46,18 @@ function App() {
       exampleSocket.onmessage = function (event) {
         const msg = JSON.parse(event.data);
         console.log(msg);
-          if ( msg.type === serverType.STATUS ) { 
+          if ( msg.type === messageType.STATUS ) { 
             switch (msg.state) {
-              case serverState.WAITING_START:
+              case messageState.WAITING_START:
                 setPlayers(msg.players);
                 break;
-              case serverState.QUESTION: 
+              case messageState.QUESTION: 
                 setGameStatus(GAME_STATES.STARTED);
                 break;
-              case serverState.PASSED: 
+              case messageState.PASSED: 
                 setGameStatus(GAME_STATES.PASSED);
                 break;
-              case serverState.ELIMINATED:
+              case messageState.ELIMINATED:
                 setGameStatus(GAME_STATES.ELIMINATED);
                 break;
             }
@@ -69,7 +69,7 @@ function App() {
   const changeGameStatus = (newGameStatus, setWaiting, playerName) => {
     setGameStatus(newGameStatus);
     var msg = {
-      type: "Join",
+      type: messageType.JOIN,
       playerName
     };
     exampleSocket.send(JSON.stringify(msg));
