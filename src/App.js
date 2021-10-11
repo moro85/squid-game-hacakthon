@@ -4,10 +4,9 @@ import './App.css';
 import './animate.css'
 import MainScreen from './screens/MainScreen';
 import GetReadyScreen from './screens/GetReadyScreen';
-import io from "socket.io-client";
+import { serverState, serverType } from './utils/enum';
 
-// const socket = io.connect('ws://localhost:8080');
-var exampleSocket = new WebSocket("ws://localhost:8080", []);
+var exampleSocket = new WebSocket("ws://localhost:3003", []);
 
 const Container = styled.div`
   width: 1200px;
@@ -29,7 +28,8 @@ function App() {
     exampleSocket.onopen = function (event) {
       exampleSocket.onmessage = function (event) {
         const msg = JSON.parse(event.data);
-        if ( msg.type === "Status" ) {
+        console.log(msg);
+        if ( msg.type === serverType.STATUS && msg.state === serverState.WAITING_START ) {
           setPlayers(msg.players)
         }
       }

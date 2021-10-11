@@ -4,10 +4,12 @@ import { colors } from '../utils/colors';
 
 const StyledMainScreen = styled.div`
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
     flex-direction: column;
     padding: 1em;
+    height: 100%;
+    position: relative;
 `;
 
 const SquidGameLogo = styled.img`
@@ -77,6 +79,29 @@ const GameAboutToStart = styled.div`
     font-size: 30px;
 `;
 
+const Persons = styled.div`
+    position: absolute;
+    bottom: 0;
+    height: 100px;
+    width: 100%;
+    padding: 0 1.5em;
+`;
+
+const Person = styled.img`
+    height: 100px;
+    position: absolute;
+    margin-left: ${({x})=>x}px;
+    transform: ${({shouldFlip})=>shouldFlip === 1 ? 'scaleX(-1)' : 'scale(1)'};
+`;
+
+const PlayersWaiting = styled.div`
+    font-size: 28px;
+    margin-top: .5em;
+    span {
+        color: ${colors.squidGamePink};
+    }
+`;
+
 
 const MainScreen = ({startGame, players}) => {
 
@@ -87,9 +112,10 @@ const MainScreen = ({startGame, players}) => {
     return (
         <StyledMainScreen>
             <SquidGameLogo src="./assets/sg_logo.png" alt="" />
-            { !waiting && <PlayerNameInput placeholder="Enter your name" onInput={(e) => {setPlayer(e.target.value)}} /> }
+            { !waiting && <PlayerNameInput autoComplete="false" placeholder="Enter your name" onInput={(e) => {setPlayer(e.target.value)}} /> }
             { !waiting && <JoinGamebutton onClick={() => startGame(setWaiting, player)}>Join Game</JoinGamebutton> }
             { waiting && <GameAboutToStart>{player}, Game about to start...</GameAboutToStart>}
+            { waiting && <PlayersWaiting><span>{players.length} players</span> are waiting with you</PlayersWaiting>}
             <MainScreenLog>
                 <ul>
                     {players && players.slice(-2).map((v)=>
@@ -97,6 +123,14 @@ const MainScreen = ({startGame, players}) => {
                     )}
                 </ul>
             </MainScreenLog>
+            { waiting && <Persons>
+                {players.map((v)=>
+                        <Person src={`./assets/person${Math.round(Math.random() * (4 - 1))}.png`} key={v} x={
+                        Math.floor(Math.random() * (1100 - 0) + 0)
+                        } shouldFlip={Math.round(Math.random() * (1 - 0))} alt="" />
+                    )
+                }
+            </Persons>}
         </StyledMainScreen>
     )
 }

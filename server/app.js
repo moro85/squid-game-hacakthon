@@ -1,6 +1,6 @@
 import { WebSocketServer, WebSocket } from "ws";
 
-const wss = new WebSocketServer({ port: process.env.PORT || 3000 });
+const wss = new WebSocketServer({ port: process.env.PORT || 3003 });
 const questionTimeout = 10000;
 const maxPlayerCount = 10;
 const questions = [
