@@ -9,7 +9,7 @@ import { QuestionScreen } from './screens/QuestionScreen/QuestionScreen';
 import PassScreen from './screens/PassScreen';
 import EliminatedScreen from './screens/EliminatedScreen';
 
-var exampleSocket = new WebSocket("ws://localhost:3003", []);
+var exampleSocket = new WebSocket("ws://localhost:8080", []);
 
 const Container = styled.div`
   width: 1200px;
@@ -27,7 +27,7 @@ const GAME_STATES = {
 
 function App() {
 
-  const [gameStatus, setGameStatus] = useState(GAME_STATES.WAITING);
+  const [gameStatus, setGameStatus] = useState(GAME_STATES.STARTED);
   const [players, setPlayers] = useState([]);
   
   const submitAnswer = (answer) => {
@@ -44,8 +44,21 @@ function App() {
       exampleSocket.onmessage = function (event) {
         const msg = JSON.parse(event.data);
         console.log(msg);
-        if ( msg.type === serverType.STATUS && msg.state === serverState.WAITING_START ) {
-          setPlayers(msg.players)
+          if ( msg.type === serverType.STATUS ) { 
+            switch (msg.state) {
+              case serverState.WAITING_START:
+                setPlayers(msg.players);
+                break;
+              case serverState.QUESTION: 
+                setGameStatus(GAME_STATES.STARTED);
+                break;
+              case serverState.PASSED: 
+                setGameStatus(GAME_STATES.PASSED);
+                break;
+              case serverState.ELIMINATED:
+                setGameStatus(GAME_STATES.ELIMINATED);
+                break;
+            }
         }
       }
     };
@@ -66,11 +79,11 @@ function App() {
       <Container>
         {gameStatus === GAME_STATES.WAITING && <MainScreen socket={exampleSocket} players={players} startGame={(setWaiting, playerName) => changeGameStatus(GAME_STATES.WAITING, setWaiting, playerName)} />}
         {gameStatus === GAME_STATES.GET_READY && <GetReadyScreen />}
-        {gameStatus === GAME_STATES.STARTED && <QuestionScreen submitAnswer={submitAnswer} />}
+        {gameStatus === GAME_STATES.STARTED && <QuestionScreen submitAnswer={() => submitAnswer()} />}
         {gameStatus === GAME_STATES.PASSED && <PassScreen playerLeftNumber={30} playerEliminatedNumber={5}/>}
         {gameStatus === GAME_STATES.ELIMINATED && <EliminatedScreen playerName={456} playerLeftNumber={20}/>}
-        <button onClick={() => changeGameStatus(GAME_STATES.PASSED)}>Pass</button>
-        <button onClick={() => changeGameStatus(GAME_STATES.ELIMINATED)}>Eliminated</button>
+        <button onClick={() => setGameStatus(GAME_STATES.PASSED)}>Pass</button>
+        <button onClick={() => setGameStatus(GAME_STATES.ELIMINATED)}>Eliminated</button>
       </Container>
     </div>
   );
