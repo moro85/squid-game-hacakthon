@@ -115,7 +115,7 @@ const MainScreen = ({startGame, players}) => {
             { !waiting && <PlayerNameInput autoComplete="false" placeholder="Enter your name" onInput={(e) => {setPlayer(e.target.value)}} /> }
             { !waiting && <JoinGamebutton onClick={() => startGame(setWaiting, player)}>Join Game</JoinGamebutton> }
             { waiting && <GameAboutToStart>{player}, Game about to start...</GameAboutToStart>}
-            { waiting && <PlayersWaiting><span>{players.length} players</span> are waiting with you</PlayersWaiting>}
+            { waiting && <PlayersWaiting><span>{players.length-1} players</span> are waiting with you</PlayersWaiting>}
             <MainScreenLog>
                 <ul>
                     {players && players.slice(-2).map((v)=>
