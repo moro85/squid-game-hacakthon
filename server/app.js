@@ -13,7 +13,7 @@ const questions = [
     validators: [() => true]
   }  
 ];
-const gameState = {
+let gameState = {
   clients: [],
   currentQuestion: 0,
   state: "NotStarted"
@@ -36,6 +36,15 @@ function validateSubmissions(client) {
   }
   return false;
 }
+
+function resetGame() {
+gameState = {
+    clients: [],
+    currentQuestion: 0,
+    state: "NotStarted"
+  };
+}
+
 
 function playNextQuestion() {
   wss.clients.forEach(function each(client) {
@@ -77,6 +86,7 @@ function playNextQuestion() {
           client.close();
         }
       });
+      resetGame();
     } else {
       playNextQuestion();
     }
