@@ -5,6 +5,8 @@ import './animate.css'
 import MainScreen from './screens/MainScreen';
 import GetReadyScreen from './screens/GetReadyScreen';
 import io from "socket.io-client";
+import PassScreen from './screens/PassScreen';
+import EliminatedScreen from './screens/EliminatedScreen';
 
 // const socket = io.connect('ws://localhost:8080');
 var exampleSocket = new WebSocket("ws://localhost:8080", []);
@@ -17,7 +19,9 @@ const Container = styled.div`
 
 const GAME_STATES = {
   "WAITING": 0,
-  "GET_READY": 1
+  "GET_READY": 1,
+  "PASSED": 2,
+  "ELIMINATED": 3
 }
 
 function App() {
@@ -51,6 +55,10 @@ function App() {
       <Container>
         {gameStatus === GAME_STATES.WAITING && <MainScreen socket={exampleSocket} players={players} startGame={(setWaiting, playerName) => changeGameStatus(GAME_STATES.WAITING, setWaiting, playerName)} />}
         {gameStatus === GAME_STATES.GET_READY && <GetReadyScreen />}
+        {gameStatus === GAME_STATES.PASSED && <PassScreen playerLeftNumber={30} playerEliminatedNumber={5}/>}
+        {gameStatus === GAME_STATES.ELIMINATED && <EliminatedScreen playerName={456} playerLeftNumber={20}/>}
+        <button onClick={() => changeGameStatus(GAME_STATES.PASSED)}>Pass</button>
+        <button onClick={() => changeGameStatus(GAME_STATES.ELIMINATED)}>Eliminated</button>
       </Container>
     </div>
   );
