@@ -66,13 +66,14 @@ function App() {
   return (
     <div className="App">
       <Container>
-        {gameStatus === GAME_STATES.WAITING && <MainScreen socket={exampleSocket} players={players} startGame={(setWaiting, playerName) => changeGameStatus(GAME_STATES.WAITING, setWaiting, playerName)} />}
+        <QuestionScreen submitAnswer={submitAnswer} />
+        {/* {gameStatus === GAME_STATES.WAITING && <MainScreen socket={exampleSocket} players={players} startGame={(setWaiting, playerName) => changeGameStatus(GAME_STATES.WAITING, setWaiting, playerName)} />}
         {gameStatus === GAME_STATES.GET_READY && <GetReadyScreen />}
         {gameStatus === GAME_STATES.STARTED && <QuestionScreen submitAnswer={submitAnswer} />}
         {gameStatus === GAME_STATES.PASSED && <PassScreen playerLeftNumber={30} playerEliminatedNumber={5}/>}
         {gameStatus === GAME_STATES.ELIMINATED && <EliminatedScreen playerName={456} playerLeftNumber={20}/>}
         <button onClick={() => changeGameStatus(GAME_STATES.PASSED)}>Pass</button>
-        <button onClick={() => changeGameStatus(GAME_STATES.ELIMINATED)}>Eliminated</button>
+        <button onClick={() => changeGameStatus(GAME_STATES.ELIMINATED)}>Eliminated</button> */}
       </Container>
     </div>
   );

@@ -1,12 +1,14 @@
 import React from 'react';
-import { QuestionContainer } from './StyledQuestionScreen';
+import { StyledQuestionScreen, StyledQuestionSubmitButton } from './StyledQuestionScreen';
 
 export const QuestionScreen = ({ submitAnswer }) => {
   return (
-    <QuestionContainer>
-      <h2>The question is:</h2>
-      <h2>Is it a bird or a plane?</h2>
-      <button onClick={submitAnswer}>Submit</button>
-    </QuestionContainer>
+    <StyledQuestionScreen>
+      <h3>Challange #1:</h3>
+      <h2>Code a factorial function in 30 seconds or less:</h2> 
+      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Tempora, provident.</p>
+      <textarea>{`function fact(num) {\n\t\r}`}</textarea>
+      <StyledQuestionSubmitButton onClick={submitAnswer}>Submit</StyledQuestionSubmitButton>
+    </StyledQuestionScreen>
   )
 }
