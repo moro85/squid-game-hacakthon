@@ -62,23 +62,15 @@ const MainScreenLog = styled.div`
 `;
 
 
-const MainScreen = () => {
-
-    const [logs, setLogs] = useState([])
-
-    useEffect(() => {
-        setInterval(()=>{
-            setLogs((logs)=>[...logs, Math.floor(Math.random() * (456 - 1) + 1)])
-        },1000)
-    }, [])
+const MainScreen = ({startGame, players}) => {
 
     return (
         <StyledMainScreen>
             <SquidGameLogo src="./assets/sg_logo.png" alt="" />
-            <JoinGamebutton>Join Game</JoinGamebutton>
+            <JoinGamebutton onClick={() => startGame()}>Join Game</JoinGamebutton>
             <MainScreenLog>
                 <ul>
-                    {logs.slice(-2).map((v)=>
+                    {players && players.slice(-2).map((v)=>
                         (<li key={v} className="animate__animated animate__bounceIn">Player {(v < 100 && v > 10) ? `0${v}` : (v < 10) ? `00${v}` : v} Joined</li>)
                     )}
                 </ul>

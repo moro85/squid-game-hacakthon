@@ -1,6 +1,8 @@
 import { WebSocketServer } from 'ws';
 
 const wss = new WebSocketServer({ port: 8080 });
+console.log("SERVER IS UP");
+
 const questionTimeout = 60000;
 const questions = [
     {
@@ -22,9 +24,10 @@ wss.getUniqueID = function () {
 };
 
 wss.on('connection', function connection(ws) {
-    ws.id = wss.getUniqueID();
+  console.log("CONNECTION");
+  ws.id = wss.getUniqueID();
   ws.on('message', function incoming(message) {
-      message = JSON.parse(message);
+    message = JSON.parse(message);
     console.log(`Received message ${JSON.stringify(message)}`);
     switch (message.type) {
         case 'Join':
@@ -37,6 +40,7 @@ wss.on('connection', function connection(ws) {
             else {
                 gameState.clients.push({playerName: message.playerName, submissions: [], status: 'Playing'});
                 ws.send(JSON.stringify({type:'Status', state: 'WaitingStart', players: gameState.clients.map(c => c.playerName)}));
+                console.log("Client added!");
             }
             break;
         case 'Submit':
@@ -46,7 +50,4 @@ wss.on('connection', function connection(ws) {
             break;
     }
   });
-
-
-  ws.send('something');
 });
