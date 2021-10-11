@@ -29,7 +29,7 @@ const GAME_STATES = {
 
 function App() {
 
-  const [gameStatus, setGameStatus] = useState(GAME_STATES.STARTED);
+  const [gameStatus, setGameStatus] = useState(GAME_STATES.WAITING);
   const [players, setPlayers] = useState([]);
   
   const submitAnswer = (answer) => {
@@ -84,8 +84,6 @@ function App() {
         {gameStatus === GAME_STATES.STARTED && <QuestionScreen submitAnswer={() => submitAnswer()} />}
         {gameStatus === GAME_STATES.PASSED && <PassScreen playerLeftNumber={30} playerEliminatedNumber={5}/>}
         {gameStatus === GAME_STATES.ELIMINATED && <EliminatedScreen playerName={456} playerLeftNumber={20}/>}
-        <button onClick={() => setGameStatus(GAME_STATES.PASSED)}>Pass</button>
-        <button onClick={() => setGameStatus(GAME_STATES.ELIMINATED)}>Eliminated</button>
       </Container>
     </div>
   );
