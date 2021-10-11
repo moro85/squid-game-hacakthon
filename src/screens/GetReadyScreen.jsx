@@ -8,7 +8,6 @@ const StyledGetReadyScreen = styled.div`
     align-items: center;
     flex-direction: column;
     height: 100%;
-    padding: 1em;
     background: ${colors.squidGamePink};
     color: #fff;
     font-family: 'Pacifico', cursive;

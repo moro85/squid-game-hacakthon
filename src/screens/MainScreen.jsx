@@ -61,12 +61,17 @@ const MainScreenLog = styled.div`
     }
 `;
 
+const PlayerNameInput = styled.input`
+
+`;
+
 
 const MainScreen = ({startGame, players}) => {
 
     return (
         <StyledMainScreen>
             <SquidGameLogo src="./assets/sg_logo.png" alt="" />
+            <PlayerNameInput />
             <JoinGamebutton onClick={() => startGame()}>Join Game</JoinGamebutton>
             <MainScreenLog>
                 <ul>

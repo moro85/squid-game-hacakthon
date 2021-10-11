@@ -2,7 +2,7 @@ import { WebSocketServer, WebSocket } from "ws";
 
 const wss = new WebSocketServer({ port: 8080 });
 const questionTimeout = 10000;
-const maxPlayerCount = 1;
+const maxPlayerCount = 10;
 const questions = [
   {
     description: "1",

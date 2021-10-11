@@ -17,7 +17,7 @@ const Container = styled.div`
 
 const GAME_STATES = {
   "WAITING": 0,
-  "STARTED": 1
+  "GET_READY": 1
 }
 
 function App() {
@@ -34,8 +34,7 @@ function App() {
       exampleSocket.send(JSON.stringify(msg));
       
       exampleSocket.onmessage = function (event) {
-        const msg = event.data;
-        JSON.parse(msg);
+        const msg = JSON.parse(event.data);
         if ( msg.type === "Status" ) {
           setPlayers(msg.players)
         }
@@ -50,7 +49,6 @@ function App() {
   return (
     <div className="App">
       <Container>
-        <span>{players.join(", ")}</span>
         {gameStatus === GAME_STATES.WAITING && <MainScreen players={players} startGame={() => changeGameStatus(GAME_STATES.GET_READY)} />}
         {gameStatus === GAME_STATES.GET_READY && <GetReadyScreen />}
       </Container>
