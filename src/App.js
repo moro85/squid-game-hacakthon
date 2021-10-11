@@ -4,14 +4,14 @@ import './App.css';
 import './animate.css'
 import MainScreen from './screens/MainScreen';
 import GetReadyScreen from './screens/GetReadyScreen';
-import { serverState, serverType } from './utils/enum';
+import { messageState, messageType } from './utils/constants';
 import { QuestionScreen } from './screens/QuestionScreen/QuestionScreen';
 import PassScreen from './screens/PassScreen';
 import EliminatedScreen from './screens/EliminatedScreen';
 
 const local = "ws://localhost:8080";
 const prod = "ws://squid.azurewebsites.net";
-var exampleSocket = new WebSocket(local, []);
+var exampleSocket = new WebSocket(prod, []);
 
 const Container = styled.div`
   width: 1200px;
@@ -31,10 +31,10 @@ function App() {
 
   const [gameStatus, setGameStatus] = useState(GAME_STATES.WAITING);
   const [players, setPlayers] = useState([]);
-  
+
   const submitAnswer = (answer) => {
     const msg = {
-      type: 'Submit',
+      type: messageType.SUBMIT,
       qNum: 1,
       code: answer || 'sample answer'
     };
@@ -46,19 +46,19 @@ function App() {
       exampleSocket.onmessage = function (event) {
         const msg = JSON.parse(event.data);
         console.log(msg);
-          if ( msg.type === serverType.STATUS ) { 
+          if ( msg.type === messageType.STATUS ) { 
             switch (msg.state) {
-              case serverState.WAITING_START:
-                console.log( { 'msg.players': msg.players })
+              case messageState.WAITING_START:
                 setPlayers(msg.players);
+                // Play pop sound here
                 break;
-              case serverState.QUESTION: 
+              case messageState.QUESTION: 
                 setGameStatus(GAME_STATES.STARTED);
                 break;
-              case serverState.PASSED: 
+              case messageState.PASSED: 
                 setGameStatus(GAME_STATES.PASSED);
                 break;
-              case serverState.ELIMINATED:
+              case messageState.ELIMINATED:
                 setGameStatus(GAME_STATES.ELIMINATED);
                 break;
             }
@@ -70,7 +70,7 @@ function App() {
   const changeGameStatus = (newGameStatus, setWaiting, playerName) => {
     setGameStatus(newGameStatus);
     var msg = {
-      type: "Join",
+      type: messageType.JOIN,
       playerName
     };
     exampleSocket.send(JSON.stringify(msg));
@@ -80,7 +80,6 @@ function App() {
   return (
     <div className="App">
       <Container>
-        {/* <QuestionScreen submitAnswer={submitAnswer} /> */}
         {gameStatus === GAME_STATES.WAITING && <MainScreen socket={exampleSocket} players={players} startGame={(setWaiting, playerName) => changeGameStatus(GAME_STATES.WAITING, setWaiting, playerName)} />}
         {gameStatus === GAME_STATES.GET_READY && <GetReadyScreen />}
         {gameStatus === GAME_STATES.STARTED && <QuestionScreen submitAnswer={() => submitAnswer()} />}

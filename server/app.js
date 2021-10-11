@@ -3,6 +3,22 @@ import { WebSocketServer, WebSocket } from "ws";
 const app = express();
 const server = app.listen(process.env.PORT || 8080);
 
+const messageState = {
+  "WAITING_START": "WaitingStart",
+  "QUESTION": "Question",
+  "PASSED": "Passed",
+  "ELIMINATED": "Eliminated",
+  "GAME_OVER": "GameOver",
+  "PLAYER_ALREADY_JOINED": "PlayerAlreadyJoined",
+  "GAME_ALREADY_STARTED": "GameAlreadyStarted",
+}
+
+const messageType = {
+  "STATUS": "Status",
+  "JOIN": "Join",
+  "SUBMIT": "Submit"
+}
+
 const wss = new WebSocketServer({ server });
 // this will make Express serve your static files
 app.use(express.static("./build-client"));
@@ -64,8 +80,8 @@ function playNextQuestion() {
       if (client.readyState === WebSocket.OPEN) {
         client.send(
           JSON.stringify({
-            type: "Status",
-            state: "Question",
+            type: messageType.STATUS,
+            state: messageState.QUESTION,
             qNum: gameState.currentQuestion,
             totalQ: questions.length,
             description: questions[gameState.currentQuestion].description,
@@ -77,13 +93,13 @@ function playNextQuestion() {
   iterationHandle = setTimeout(() => {
     gameState.currentQuestion++;
     if (gameState.currentQuestion === questions.length) {
-      gameState.state = "GameOver";
+      gameState.state = messageState.GAME_OVER;
       wss.clients.forEach(function each(client) {
         if (client.readyState === WebSocket.OPEN) {
           client.send(
             JSON.stringify({
-              type: "Status",
-              state: "GameOver",
+              type: messageType.STATUS,
+              state: messageState.GAME_OVER,
               winners: gameState.clients
                 .filter(c => c.status === "Playing")
                 .map(c => c.playerName),
@@ -126,7 +142,7 @@ wss.on("connection", function connection(ws) {
       case "Join":
         if (gameState.state !== "NotStarted") {
           ws.send(
-            JSON.stringify({ type: "Status", state: "GameAlreadyStarted" })
+            JSON.stringify({ type: messageType.STATUS, state: messageState.GAME_ALREADY_STARTED })
           );
           return;
         }
@@ -138,7 +154,7 @@ wss.on("connection", function connection(ws) {
           )
         ) {
           ws.send(
-            JSON.stringify({ type: "Status", state: "PlayerAlreadyJoined" })
+            JSON.stringify({ type: messageType.STATUS, state: messageState.PLAYER_ALREADY_JOINED })
           );
         } else {
           gameState.clients.push({
@@ -154,8 +170,8 @@ wss.on("connection", function connection(ws) {
               if (client.readyState === WebSocket.OPEN) {
                 client.send(
                   JSON.stringify({
-                    type: "Status",
-                    state: "WaitingStart",
+                    type: messageType.STATUS,
+                    state: messageState.WAITING_START,
                     players: gameState.clients.map(c => c.playerName)
                   })
                 );
@@ -167,7 +183,8 @@ wss.on("connection", function connection(ws) {
       case "Submit":
         if (
           gameState.state !== "NotStarted" &&
-          message.qNum === gameState.currentQuestion
+          message.qNum === gameState.currentQuestion &&
+          gameState.clients.find(c => c.id === ws.id).status !== "Lost"
         ) {
           if (
             validateSubmission(
@@ -175,15 +192,12 @@ wss.on("connection", function connection(ws) {
               questions[gameState.currentQuestion]
             )
           ) {
-            ws.send(JSON.stringify({ type: "Status", state: "Passed" }));
+            ws.send(JSON.stringify({ type: messageType.STATUS, state: messageState.PASSED }));
           } else {
             gameState.clients.find(c => c.id === ws.id).status = "Lost";
-            ws.send(JSON.stringify({ type: "Status", state: "Eliminated" }));
+            ws.send(JSON.stringify({ type: messageType.STATUS, state: messageState.ELIMINATED }));
           }
         }
-        ws.send(
-           JSON.stringify({ type: "Status", state: Math.round(Math.random()) ? "Passed" : "Eliminated" })
-        );
         break;
       default:
         break;
