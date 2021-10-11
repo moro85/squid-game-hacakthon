@@ -28,6 +28,8 @@ wss.getUniqueID = function() {
   return s4() + s4() + "-" + s4();
 };
 
+let iterationHandle = null;
+
 function validateSubmissions(client) {
   if (client.submissions[gameState.currentQuestion]) {
     return questions[gameState.currentQuestion].validators.every(validator =>
@@ -60,7 +62,7 @@ function playNextQuestion() {
       );
     }
   });
-  setTimeout(() => {
+  iterationHandle = setTimeout(() => {
     gameState.clients.forEach(c => {
       if (!validateSubmissions(c)) {
         c.status = "Lost";
@@ -95,6 +97,18 @@ function playNextQuestion() {
 
 wss.on("connection", function connection(ws) {
   ws.id = wss.getUniqueID();
+  ws.on('close', function close() {
+    console.log('disconnected');
+    const client = gameState.clients.find(c=>c.id === ws.id);
+    if (client) {
+        gameState.clients = gameState.clients.splice(gameState.clients.indexOf(client),1);
+        if (gameState.clients.length === 0) {
+            clearTimeout(iterationHandle);
+            resetGame();
+        }
+    }
+  });
+
   ws.on("message", function incoming(message) {
     message = JSON.parse(message);
     console.log(`Received message ${JSON.stringify(message)}`);
