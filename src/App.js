@@ -11,7 +11,7 @@ import EliminatedScreen from './screens/EliminatedScreen';
 
 const local = "ws://localhost:8080";
 const prod = "ws://squid.azurewebsites.net";
-var exampleSocket = new WebSocket(local, []);
+var exampleSocket = new WebSocket(prod, []);
 
 const Container = styled.div`
   width: 1200px;

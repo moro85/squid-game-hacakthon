@@ -113,9 +113,10 @@ const MainScreen = ({startGame, players}) => {
         <StyledMainScreen>
             {/* Add Salt fish sound here */}
             <SquidGameLogo src="./assets/sg_logo.png" alt="" />
-            { !waiting && <PlayerNameInput autoComplete="false" placeholder="Enter your name" onInput={(e) => {setPlayer(e.target.value)}} /> }
+            { !waiting && <PlayerNameInput autoComplete="false" placeholder="Enter your name" onKeyUp={(e) => {setPlayer(e.target.value); if (e.key === "Enter") startGame(setWaiting, player)}} /> }
             { !waiting && <JoinGamebutton onClick={() => startGame(setWaiting, player)}>Join Game</JoinGamebutton> }
             { waiting && <GameAboutToStart>{player}, Game about to start...</GameAboutToStart>}
+            { waiting && <img src="./assets/spinner.gif" alt="spinner" />}
             { waiting && <PlayersWaiting><span>{players.length-1} players</span> are waiting with you</PlayersWaiting>}
             <MainScreenLog>
                 <ul>
@@ -126,9 +127,9 @@ const MainScreen = ({startGame, players}) => {
             </MainScreenLog>
             { waiting && <Persons>
                 {players.map((v)=>
-                        <Person src={`./assets/person${Math.round(Math.random() * (4 - 1) - 1)}.png`} key={v} x={
+                        <Person src={`./assets/person${Math.round(Math.random() * (4 - 1))}.png`} key={v} x={
                         Math.floor(Math.random() * (1100 - 0) + 0)
-                        } shouldFlip={Math.round(Math.random() * (1 - 0))} alt="" />
+                        } shouldFlip={Math.round(Math.random() * (1 - 0)) + 1} alt="" />
                     )
                 }
             </Persons>}
