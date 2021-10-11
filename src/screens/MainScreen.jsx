@@ -1,8 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import styled from 'styled-components';
-import { Player, useAudio } from '../hooks/use-audio';
 import { colors } from '../utils/colors';
-import { playSound, SCARY_TUNE } from '../utils/sound';
 
 const StyledMainScreen = styled.div`
     display: flex;
@@ -110,15 +108,6 @@ const MainScreen = ({startGame, players}) => {
     const [waiting, setWaiting] = useState(false)
     const [player, setPlayer] = useState("");
     const inputRef = useRef();
-    const { setPlaying: shouldPlayScarySound } = useAudio(SCARY_TUNE);
-
-    useEffect(() => {
-        inputRef.current.focus();
-        shouldPlayScarySound(true)
-        return () => {
-            shouldPlayScarySound(false)
-        }
-    }, []);
 
     useEffect(() => {
         inputRef.current.focus();
@@ -126,8 +115,9 @@ const MainScreen = ({startGame, players}) => {
 
     return (
         <StyledMainScreen>
+            {/* Add Salt fish sound here */}
             <SquidGameLogo src="./assets/sg_logo.png" alt="" />
-            { !waiting && <PlayerNameInput ref={inputRef} autoComplete="false" placeholder="Enter your name" onKeyUp={(e) => {setPlayer(e.target.value); if (e.key === "Enter") startGame(setWaiting, player)}} /> }
+            { !waiting && <PlayerNameInput autoComplete="false" placeholder="Enter your name" onKeyUp={(e) => {setPlayer(e.target.value); if (e.key === "Enter") startGame(setWaiting, player)}} /> }
             { !waiting && <JoinGamebutton onClick={() => startGame(setWaiting, player)}>Join Game</JoinGamebutton> }
             { waiting && <GameAboutToStart>{player}, Game about to start...</GameAboutToStart>}
             { waiting && <img src="./assets/spinner.gif" alt="spinner" />}
@@ -141,7 +131,7 @@ const MainScreen = ({startGame, players}) => {
             </MainScreenLog>
             { waiting && <Persons>
                 {players.map((v)=>
-                        <Person src={`./assets/person${Math.round(Math.random() * (4 - 1))}.png`} key={v} x={
+                        <Person src={`./assets/person${Math.round(Math.random() * (4 - 1)) + 1}.png`} key={v} x={
                         Math.floor(Math.random() * (1100 - 0) + 0)
                         } shouldFlip={Math.round(Math.random() * (1 - 0)) + 1} alt="" />
                     )
