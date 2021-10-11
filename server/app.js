@@ -1,6 +1,10 @@
 import { WebSocketServer, WebSocket } from "ws";
+import { createServer } from "http";
+import { parse } from "url";
 
-const wss = new WebSocketServer({ port: process.env.PORT || 3000 });
+const server = createServer();
+
+const wss = new WebSocketServer({ noServer: true });
 const questionTimeout = 10000;
 const maxPlayerCount = 10;
 const questions = [
@@ -11,7 +15,7 @@ const questions = [
   {
     description: "2",
     validators: [() => true]
-  }  
+  }
 ];
 let gameState = {
   clients: [],
@@ -40,13 +44,12 @@ function validateSubmissions(client) {
 }
 
 function resetGame() {
-gameState = {
+  gameState = {
     clients: [],
     currentQuestion: 0,
     state: "NotStarted"
   };
 }
-
 
 function playNextQuestion() {
   wss.clients.forEach(function each(client) {
@@ -97,15 +100,18 @@ function playNextQuestion() {
 
 wss.on("connection", function connection(ws) {
   ws.id = wss.getUniqueID();
-  ws.on('close', function close() {
-    console.log('disconnected');
-    const client = gameState.clients.find(c=>c.id === ws.id);
+  ws.on("close", function close() {
+    console.log("disconnected");
+    const client = gameState.clients.find(c => c.id === ws.id);
     if (client) {
-        gameState.clients = gameState.clients.splice(gameState.clients.indexOf(client),1);
-        if (gameState.clients.length === 0) {
-            clearTimeout(iterationHandle);
-            resetGame();
-        }
+      gameState.clients = gameState.clients.splice(
+        gameState.clients.indexOf(client),
+        1
+      );
+      if (gameState.clients.length === 0) {
+        clearTimeout(iterationHandle);
+        resetGame();
+      }
     }
   });
 
@@ -170,3 +176,17 @@ wss.on("connection", function connection(ws) {
     }
   });
 });
+
+server.on("upgrade", function upgrade(request, socket, head) {
+    const { pathname } = parse(request.url);
+  
+    if (pathname === "/") {
+      wss.handleUpgrade(request, socket, head, function done(ws) {
+        wss.emit("connection", ws, request);
+      });
+    } else {
+      socket.destroy();
+    }
+  });  
+
+server.listen(process.env.PORT || 8080);
