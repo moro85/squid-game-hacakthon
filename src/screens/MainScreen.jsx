@@ -114,21 +114,27 @@ const MainScreen = ({startGame, players}) => {
 
     useEffect(() => {
         inputRef.current.focus();
-        shouldPlayScarySound(true)
         return () => {
+            console.log('will unmount')
             shouldPlayScarySound(false)
         }
     }, []);
 
-    useEffect(() => {
-        inputRef.current.focus();
-    }, []);
+    const onInputChanged = (e) => {
+        return shouldPlayScarySound(e.target.value % 2 !== 0);
+    };
 
+    const startGameWrapper = () => {
+        shouldPlayScarySound(false);
+        return startGame(setWaiting, player);
+    };
+    
     return (
         <StyledMainScreen>
+            <Player src={SCARY_TUNE} />
             <SquidGameLogo src="./assets/sg_logo.png" alt="" />
-            { !waiting && <PlayerNameInput ref={inputRef} autoComplete="false" placeholder="Enter your name" onKeyUp={(e) => {setPlayer(e.target.value); if (e.key === "Enter") startGame(setWaiting, player)}} /> }
-            { !waiting && <JoinGamebutton onClick={() => startGame(setWaiting, player)}>Join Game</JoinGamebutton> }
+            { !waiting && <PlayerNameInput ref={inputRef} onChange={onInputChanged} autoComplete="false" placeholder="Enter your name" onKeyUp={(e) => {setPlayer(e.target.value); if (e.key === "Enter") startGameWrapper() }} /> }
+            { !waiting && <JoinGamebutton onClick={startGameWrapper}>Join Game</JoinGamebutton> }
             { waiting && <GameAboutToStart>{player}, Game about to start...</GameAboutToStart>}
             { waiting && <img src="./assets/spinner.gif" alt="spinner" />}
             { waiting && <PlayersWaiting>{players.length !== 1 ? <><span>{players.length - 1} players</span> {(players.length - 1) === 1 ? 'is' : 'are'} waiting with you</> : "Welcome to lobby. you are the first one. Make yourself at home until others join."}</PlayersWaiting>}
