@@ -45,7 +45,7 @@ function runCodeIsolated(code, params) {
 }
 
 const questionTimeout = 10000;
-const maxPlayerCount = 1;
+const maxPlayerCount = 3;
 const questions = [
   {
     description:
