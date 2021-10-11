@@ -175,6 +175,9 @@ wss.on("connection", function connection(ws) {
               message.code;
           }
         }
+        ws.send(
+           JSON.stringify({ type: "Status", state: Math.round(Math.random()) ? "Passed" : "Eliminated" })
+        );
         break;
       default:
         break;
