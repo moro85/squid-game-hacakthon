@@ -18,7 +18,7 @@ export const messageType = {
   };
 
 export const questionTimeout = 30000;
-export const maxPlayerCount = 1;
+export const maxPlayerCount = 3;
 
 function runCodeIsolated(code, params) {
     try {
@@ -45,6 +45,6 @@ export const questions = [
   {
     description: "Write a functoin that accepts a string and returns that string printed backwards.",
     validators: [code => runCodeIsolated(code, `"string"`) === "gnirts"],
-    codeTemplate: "(str) => { }"
+    codeTemplate: "(str) => {\n  \n}"
   }
 ];

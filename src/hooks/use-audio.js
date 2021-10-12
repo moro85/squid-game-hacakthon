@@ -23,7 +23,7 @@ export const useAudio = (url) => {
 };
 
 export const Player = ({ url }) => {
-  const { playing, toggle } = useAudio(url);
+  const { toggle } = useAudio(url);
 
   useEffect(() => {
     toggle();

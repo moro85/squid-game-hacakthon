@@ -17,17 +17,16 @@ const StyledMainScreen = styled.div`
 `;
 
 const SquidGameLogo = styled.img`
-    width: 500px;
+    width: 42%;
 `;
 
 const JoinGamebutton = styled.button`
-    width: 690px;
-    height: 82px;
+    height: 5rem;
     background: ${colors.squidGamePink};
     border-radius: 28px;
     color: #fff;
     border: 0;
-    font-size: 34px;
+    font-size: 5rem;
     cursor: pointer;
     transition: .18s all;
     &:hover {
@@ -74,32 +73,35 @@ const PlayerNameInput = styled.input`
     text-align: center;
     padding: .5em;
     border-bottom: 3px solid ${colors.squidGamePink};
-    font-size: 35px;
+    font-size: 2.5rem;
     border-top-right-radius: 8px;
     border-top-left-radius: 8px;
+    background-color: transparent;
+    color: ${colors.squidGameDark};
 `;
 
 const GameAboutToStart = styled.div`
-    font-size: 30px;
+    font-size: 2rem;
 `;
 
 const Persons = styled.div`
     position: absolute;
     bottom: 0;
-    height: 100px;
+    height: 6.25rem;
     width: 100%;
     padding: 0 1.5em;
 `;
 
 const Person = styled.img`
-    height: 100px;
+    height: 6.25rem;
     position: absolute;
-    margin-left: ${({x})=>x}px;
+    margin-left: ${({ x }) => x}px;
     transform: ${({shouldFlip})=>shouldFlip === 1 ? 'scaleX(-1)' : 'scale(1)'};
 `;
 
-const PlayersWaiting = styled.div`
-    font-size: 28px;
+const PlayersWaiting = styled.p`
+    width: 50rem;
+    font-size: 1.75rem;
     margin-top: .5em;
     span {
         color: ${colors.squidGamePink};
@@ -116,7 +118,7 @@ const MainScreen = ({startGame, players}) => {
     const inputRef = useRef();
 
     useEffect(() => {
-        inputRef.current.focus();
+        inputRef?.current?.focus();
         return () => {
             shouldPlayScarySound(false)
         }
