@@ -86,7 +86,7 @@ function App() {
         setGameStatus(GAME_STATES.ERROR);
       }
     }
-  }, [gameStatus])
+  }, [gameStatus, playNewPlayerSound])
 
   const changeGameStatus = (newGameStatus, setWaiting, playerName) => {
     setGameStatus(newGameStatus);
