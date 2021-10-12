@@ -29,6 +29,7 @@ const PassScreen = ({ playerLeftNumber, playerEliminatedNumber }) => {
             {/* <h2>{playerEliminatedNumber} users eliminated this round!</h2> */}
             {/* <h2>{playerLeftNumber} left!</h2> */}
             <h2>Waiting for all players to submit or fail to continue to the next round...</h2>
+            <img src="./assets/spinner_white.gif" alt="" />
         </StyledPassScreen>
     )
 }

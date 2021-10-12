@@ -24,8 +24,6 @@ export const QuestionScreen = ({ submitAnswer, question }) => {
   const [code, setCode] = useState(question.codeTemplate);
   const [timeLeft, setTimeLeft] = useState(question.timeLeft || 0);
 
-  console.log({question});
-
   useEffect(() => {
     setInterval(()=>{
       setTimeLeft(timeLeft => timeLeft -= 1000);
@@ -50,7 +48,7 @@ export const QuestionScreen = ({ submitAnswer, question }) => {
           }}
         />
       </EditorContainer>
-      <StyledQuestionSubmitButton onClick={() => submitAnswer(code, question.qNum)}>Submit</StyledQuestionSubmitButton>
+      <StyledQuestionSubmitButton onClick={() => {submitAnswer(code, question.qNum);}}>Submit</StyledQuestionSubmitButton>
     </StyledQuestionScreen>
   )
 }
