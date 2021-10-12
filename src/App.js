@@ -9,6 +9,7 @@ import { playSound, NEW_PLAYER_SOUND } from './utils/sound';
 import { QuestionScreen } from './screens/QuestionScreen/QuestionScreen';
 import PassScreen from './screens/PassScreen';
 import EliminatedScreen from './screens/EliminatedScreen';
+import GameOverScreen from './screens/GameOverScreen/GameOverScreen';
 import { sendSocketMessage, socket } from './utils/socket';
 import ErrorScreen from './screens/ErrorScreen';
 import { useAudio } from './hooks/use-audio';
@@ -34,14 +35,14 @@ function App() {
   const { setAppState } = useAppState();
   const [gameStatus, setGameStatus] = useState(GAME_STATES.WAITING);
   const [players, setPlayers] = useState([]);
+  const [winners, setWinners] = useState([]);
   const [currentQuestion, setCurrentQuestion] = useState({});
   const { setPlaying: setPlayNewPlaySound } = useAudio(NEW_PLAYER_SOUND);
   const playNewPlayerSound = () => setPlayNewPlaySound(true);
 
   const submitAnswer = (answer, qNum) => {
     console.log(answer);
-    sendSocketMessage(messageType.SUBMIT, {qNum,
-      code: answer || 'sample answer'});
+    sendSocketMessage(messageType.SUBMIT, { qNum, code: answer || 'sample answer' });
   };
 
   useEffect(() => {
@@ -49,14 +50,14 @@ function App() {
       socket.onmessage = function (event) {
         const msg = JSON.parse(event.data);
         console.log(msg);
-          if ( msg.type === messageType.STATUS ) { 
+          if ( msg.type === messageType.STATUS ) {
             switch (msg.state) {
               case messageState.WAITING_START:
                 setPlayers(msg.players);
                 setAppState({ maxPlayerCount: msg.maxPlayerCount });
                 playNewPlayerSound();
                 break;
-              case messageState.QUESTION: 
+              case messageState.QUESTION:
                 setCurrentQuestion({
                   description: msg.description,
                   timeLeft: msg.timeLeft,
@@ -65,7 +66,7 @@ function App() {
                 })
                 setGameStatus(GAME_STATES.STARTED);
                 break;
-              case messageState.PASSED: 
+              case messageState.PASSED:
                 setGameStatus(GAME_STATES.PASSED);
                 break;
               case messageState.ELIMINATED:
@@ -73,6 +74,7 @@ function App() {
                 break;
               case messageState.GAME_OVER:
                 setGameStatus(GAME_STATES.GAME_OVER);
+                setWinners(msg.winners);
                 break;
               default:
                 setGameStatus(GAME_STATES.WAITING_START);
@@ -81,7 +83,7 @@ function App() {
         }
       }
     };
-    
+
     socket.onclose = function (event) {
       if (gameStatus !== GAME_STATES.ELIMINATED) {
         setGameStatus(GAME_STATES.ERROR);
@@ -104,6 +106,7 @@ function App() {
         {gameStatus === GAME_STATES.PASSED && <PassScreen playerLeftNumber={30} playerEliminatedNumber={5}/>}
         {gameStatus === GAME_STATES.ELIMINATED && <EliminatedScreen playerName={456} playerLeftNumber={20}/>}
         {gameStatus === GAME_STATES.ERROR && <ErrorScreen />}
+        {gameStatus === GAME_STATES.GAME_OVER && <GameOverScreen winners={winners} />}
       </Container>
     </div>
   );
