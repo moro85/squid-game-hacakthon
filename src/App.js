@@ -9,9 +9,8 @@ import { playSound, NEW_PLAYER_SOUND } from './utils/sound';
 import { QuestionScreen } from './screens/QuestionScreen/QuestionScreen';
 import PassScreen from './screens/PassScreen';
 import EliminatedScreen from './screens/EliminatedScreen';
-
-const wsServer = window.location.host.replace("http://","ws://").replace("3000","8080");
-var exampleSocket = new WebSocket(`ws://${wsServer}`, []);
+import { sendSocketMessage, socket } from './utils/socket';
+import ErrorScreen from './screens/ErrorScreen';
 
 const Container = styled.div`
   width: 1200px;
@@ -24,7 +23,8 @@ const GAME_STATES = {
   "GET_READY": 1,
   "STARTED": 2,
   "PASSED": 3,
-  "ELIMINATED": 4
+  "ELIMINATED": 4,
+  "ERROR": 5
 }
 
 function App() {
@@ -33,17 +33,19 @@ function App() {
   const [players, setPlayers] = useState([]);
 
   const submitAnswer = (answer) => {
+    console.log(answer);
     const msg = {
       type: messageType.SUBMIT,
       qNum: 1,
       code: answer || 'sample answer'
     };
-    exampleSocket.send(JSON.stringify(msg));
+    console.log(socket);
+    socket.send(JSON.stringify(msg));
   };
 
   useEffect(() => {
-    exampleSocket.onopen = function (event) {
-      exampleSocket.onmessage = function (event) {
+    socket.onopen = function (event) {
+      socket.onmessage = function (event) {
         const msg = JSON.parse(event.data);
         console.log(msg);
           if ( msg.type === messageType.STATUS ) { 
@@ -62,30 +64,36 @@ function App() {
               case messageState.ELIMINATED:
                 setGameStatus(GAME_STATES.ELIMINATED);
                 break;
+              default:
+                setGameStatus(GAME_STATES.WAITING_START);
+              break;
             }
         }
       }
     };
-  }, [])
+    
+    socket.onclose = function (event) {
+      if (gameStatus !== GAME_STATES.ELIMINATED) {
+        setGameStatus(GAME_STATES.ERROR);
+      }
+    }
+  }, [gameStatus])
 
   const changeGameStatus = (newGameStatus, setWaiting, playerName) => {
     setGameStatus(newGameStatus);
-    var msg = {
-      type: messageType.JOIN,
-      playerName
-    };
-    exampleSocket.send(JSON.stringify(msg));
+    sendSocketMessage(messageType.JOIN, {playerName});
     setWaiting(true);
   }
 
   return (
     <div className="App">
       <Container>
-        {gameStatus === GAME_STATES.WAITING && <MainScreen socket={exampleSocket} players={players} startGame={(setWaiting, playerName) => changeGameStatus(GAME_STATES.WAITING, setWaiting, playerName)} />}
+        {gameStatus === GAME_STATES.WAITING && <MainScreen socket={socket} players={players} startGame={(setWaiting, playerName) => changeGameStatus(GAME_STATES.WAITING, setWaiting, playerName)} />}
         {gameStatus === GAME_STATES.GET_READY && <GetReadyScreen />}
         {gameStatus === GAME_STATES.STARTED && <QuestionScreen submitAnswer={() => submitAnswer()} />}
         {gameStatus === GAME_STATES.PASSED && <PassScreen playerLeftNumber={30} playerEliminatedNumber={5}/>}
         {gameStatus === GAME_STATES.ELIMINATED && <EliminatedScreen playerName={456} playerLeftNumber={20}/>}
+        {gameStatus === GAME_STATES.ERROR && <ErrorScreen />}
       </Container>
     </div>
   );
