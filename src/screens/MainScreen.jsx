@@ -135,6 +135,8 @@ const MainScreen = ({startGame, players}) => {
         return startGame(setWaiting, player);
     };
     
+    const isSinglePlayerWaitingWithYou = players.length === 2;
+
     return (
         <StyledMainScreen>
             <SquidGameLogo src="./assets/sg_logo.png" alt="" />
@@ -142,7 +144,7 @@ const MainScreen = ({startGame, players}) => {
             { !waiting && <JoinGamebutton onClick={startGameWrapper}>Join Game</JoinGamebutton> }
             { waiting && <GameAboutToStart>{player}, Game about to start...</GameAboutToStart>}
             { waiting && <img src="./assets/spinner.gif" alt="spinner" />}
-            { waiting && <PlayersWaiting>{players.length !== 1 ? <><span>{players.length - 1} players</span> {(players.length - 1) === 1 ? 'is' : 'are'} waiting with you</> : "Welcome to lobby. you are the first one. Make yourself at home until others join."}</PlayersWaiting>}
+            { waiting && players.length && <PlayersWaiting>{players.length !== 1 ? <><span>{players.length - 1} {`player${!isSinglePlayerWaitingWithYou ? "s" : ""}`}</span> {isSinglePlayerWaitingWithYou ? 'is' : 'are'} waiting with you</> : "Welcome to lobby. you are the first one. Make yourself at home until others join."}</PlayersWaiting>}
             <MainScreenLog>
                 <ul>
                     {players && players.slice(-2).map((v)=>
