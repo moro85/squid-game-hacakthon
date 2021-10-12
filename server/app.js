@@ -115,6 +115,13 @@ registerOnSubmit((message, ws) => {
       );
       ws.close();
     }
+    if (![...wss.clients].filter(c => c.status === messageState.PLAYING).length &&
+      gameState.currentQuestion !== questions.length
+    ) {
+      clearTimeout(iterationHandle);
+      gameState.currentQuestion++;
+      playNextQuestion();
+    }
   }
 });
 
@@ -138,7 +145,7 @@ registerOnJoin((playerName, ws) => {
   } else {
     ws.playerName = playerName;
     ws.status = messageState.PLAYING;
-    if (wss.clients.size === maxPlayerCount) {
+    if ([...wss.clients].filter(c => c.status === messageState.PLAYING).length === maxPlayerCount) {
       gameState.isStarted = true;
       playNextQuestion();
     } else {
