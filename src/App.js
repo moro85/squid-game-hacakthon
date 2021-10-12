@@ -4,8 +4,7 @@ import './App.css';
 import './animate.css'
 import MainScreen from './screens/MainScreen';
 import GetReadyScreen from './screens/GetReadyScreen';
-import { deviceType, messageState, messageType } from './utils/constants';
-import { playSound, NEW_PLAYER_SOUND } from './utils/sound';
+import { deviceType, messageState, messageType, NEW_PLAYER_SOUND } from './utils/constants';
 import { QuestionScreen } from './screens/QuestionScreen/QuestionScreen';
 import PassScreen from './screens/PassScreen';
 import EliminatedScreen from './screens/EliminatedScreen';
@@ -47,8 +46,11 @@ function App() {
     sendSocketMessage(messageType.SUBMIT, { qNum, code: answer || 'sample answer' });
   };
 
-  useEffect(() => {
+  useEffect(() => { 
     setAppState({ deviceType: isSmall ? deviceType.PHONE : deviceType.COMPUTER });
+  }, [])
+
+  useEffect(() => {
     socket.onopen = function (event) {
       socket.onmessage = function (event) {
         const msg = JSON.parse(event.data);

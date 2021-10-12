@@ -2,8 +2,8 @@ import React, { useEffect, useRef, useState } from 'react'
 import styled from 'styled-components';
 import { useAudio } from '../hooks/use-audio';
 import { colors } from '../utils/colors';
-import { SCARY_TUNE } from '../utils/sound';
 import { useAppState } from '../providers/AppStateProvider';
+import { SCARY_TUNE } from '../utils/constants';
 
 
 const StyledMainScreen = styled.div`
@@ -118,7 +118,6 @@ const MainScreen = ({startGame, players}) => {
     useEffect(() => {
         inputRef.current.focus();
         return () => {
-            console.log('will unmount')
             shouldPlayScarySound(false)
         }
     }, [shouldPlayScarySound]);
@@ -132,7 +131,6 @@ const MainScreen = ({startGame, players}) => {
     };
     
     const startGameWrapper = () => {
-        console.log('startGameWrapper, hence stopping music')
         shouldPlayScarySound(false);
         return startGame(setWaiting, player);
     };

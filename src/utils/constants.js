@@ -18,3 +18,7 @@ export const deviceType = {
     PHONE: "Phone",
     COMPUTER: "Computer"
 }
+
+// SOUNDS
+export const NEW_PLAYER_SOUND = 'assets/sounds/pop.mp3';
+export const SCARY_TUNE = 'assets/sounds/salt_fish.mp3';
