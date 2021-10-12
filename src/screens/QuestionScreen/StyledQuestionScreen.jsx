@@ -10,11 +10,13 @@ export const StyledQuestionScreen = styled.div`
     background: ${colors.squidGamePink};
     color: #fff;
     font-family: 'Pacifico', cursive;
+    position: relative;
     h2 {
         margin-top: -1em;
         margin-bottom: 0;
         font-family: 'Roboto';
         font-size: 2em;
+        padding: 0 5em;
     }
     h3 {
         font-size: 1.5em;

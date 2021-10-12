@@ -31,6 +31,7 @@ function App() {
 
   const [gameStatus, setGameStatus] = useState(GAME_STATES.WAITING);
   const [players, setPlayers] = useState([]);
+  const [currentQuestion, setCurrentQuestion] = useState({});
 
   const submitAnswer = (answer) => {
     console.log(answer);
@@ -56,6 +57,11 @@ function App() {
                 console.log('played sound!')
                 break;
               case messageState.QUESTION: 
+                setCurrentQuestion({
+                  description: msg.description,
+                  timeLeft: msg.timeLeft,
+                  codeTemplate: msg.codeTemplate
+                })
                 setGameStatus(GAME_STATES.STARTED);
                 break;
               case messageState.PASSED: 
@@ -90,7 +96,7 @@ function App() {
       <Container>
         {gameStatus === GAME_STATES.WAITING && <MainScreen socket={socket} players={players} startGame={(setWaiting, playerName) => changeGameStatus(GAME_STATES.WAITING, setWaiting, playerName)} />}
         {gameStatus === GAME_STATES.GET_READY && <GetReadyScreen />}
-        {gameStatus === GAME_STATES.STARTED && <QuestionScreen submitAnswer={() => submitAnswer()} />}
+        {gameStatus === GAME_STATES.STARTED && <QuestionScreen question={currentQuestion} submitAnswer={() => submitAnswer()} />}
         {gameStatus === GAME_STATES.PASSED && <PassScreen playerLeftNumber={30} playerEliminatedNumber={5}/>}
         {gameStatus === GAME_STATES.ELIMINATED && <EliminatedScreen playerName={456} playerLeftNumber={20}/>}
         {gameStatus === GAME_STATES.ERROR && <ErrorScreen />}
