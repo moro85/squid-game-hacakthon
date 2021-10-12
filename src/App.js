@@ -88,7 +88,7 @@ function App() {
     };
 
     socket.onclose = function (event) {
-      if (gameStatus !== GAME_STATES.ELIMINATED ) {
+      if (gameStatus !== GAME_STATES.ELIMINATED && gameStatus !== GAME_STATES.GAME_OVER) {
         setGameStatus(GAME_STATES.ERROR);
       }
     }

@@ -38,6 +38,15 @@ function resetGame() {
   })
 }
 
+function gameOver(ws) {
+  gameState.state = messageState.GAME_OVER;
+  ws.send(JSON.stringify({
+    type: messageType.STATUS,
+    state: messageState.GAME_OVER
+  }));
+  ws.close();
+}
+
 let iterationHandle = null;
 function playNextQuestion() {
   broadcast({
@@ -60,13 +69,7 @@ function playNextQuestion() {
       gameState.state = messageState.GAME_OVER;
       broadcast({
         type: messageType.STATUS,
-        state: messageState.GAME_OVER,
-        winners: [...wss.clients]
-          .filter(c => c.status === messageState.PASSED)
-          .map(c => c.playerName),
-        losers: [...wss.clients]
-          .filter(c => c.status === messageState.ELIMINATED)
-          .map(c => c.playerName)
+        state: messageState.ELIMINATED
       });
       resetGame();
     } else {
@@ -105,6 +108,11 @@ registerOnSubmit((message, ws) => {
           state: messageState.PASSED
         })
       );
+
+      if (gameState.currentQuestion + 1 === questions.length) {
+        gameOver(ws);
+        return;
+      }
     } else {
       ws.status = messageState.ELIMINATED;
       ws.send(
@@ -115,9 +123,8 @@ registerOnSubmit((message, ws) => {
       );
       ws.close();
     }
-    if (![...wss.clients].filter(c => c.status === messageState.PLAYING).length &&
-      gameState.currentQuestion !== questions.length
-    ) {
+
+    if (![...wss.clients].filter(c => c.status === messageState.PLAYING).length) {
       clearTimeout(iterationHandle);
       gameState.currentQuestion++;
       playNextQuestion();
