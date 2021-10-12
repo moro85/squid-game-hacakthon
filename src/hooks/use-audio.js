@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 
-export const useAudio = url => {
-  const [audio] = useState(new Audio(`audios/${url}.mp3`));
+export const useAudio = (url) => {
+  const [audio] = useState(new Audio(url));
   const [playing, setPlaying] = useState(false);
 
   const toggle = () => setPlaying(!playing);
 
   useEffect(() => {
+    console.log('will start play?', playing, url)
       playing ? audio.play() : audio.pause();
     },
     [playing]
@@ -23,7 +24,7 @@ export const useAudio = url => {
 };
 
 export const Player = ({ url }) => {
-  const [playing, toggle] = useAudio(url);
+  const { playing, toggle } = useAudio(url);
 
   useEffect(() => {
     toggle();

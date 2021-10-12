@@ -1,6 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react'
 import styled from 'styled-components';
+import { useAudio } from '../hooks/use-audio';
 import { colors } from '../utils/colors';
+import { SCARY_TUNE } from '../utils/sound';
+
 
 const StyledMainScreen = styled.div`
     display: flex;
@@ -102,23 +105,41 @@ const PlayersWaiting = styled.div`
     }
 `;
 
-
 const MainScreen = ({startGame, players}) => {
 
     const [waiting, setWaiting] = useState(false)
     const [player, setPlayer] = useState("");
+    const { setPlaying: shouldPlayScarySound, playing } = useAudio(SCARY_TUNE);
+
     const inputRef = useRef();
 
     useEffect(() => {
-        // inputRef.current.focus();
+        inputRef.current.focus();
+        return () => {
+            console.log('will unmount')
+            shouldPlayScarySound(false)
+        }
     }, []);
 
+    const onInputChanged = (e) => {
+        // just for fun & cripiyness, playing the sound if there is value on the input
+        const shouldPlayMusic = !!e.target.value;
+        if (playing !== shouldPlayMusic) {
+            shouldPlayScarySound(shouldPlayMusic);
+        }
+    };
+    
+    const startGameWrapper = () => {
+        console.log('startGameWrapper, hence stopping music')
+        shouldPlayScarySound(false);
+        return startGame(setWaiting, player);
+    };
+    
     return (
         <StyledMainScreen>
-            {/* Add Salt fish sound here */}
             <SquidGameLogo src="./assets/sg_logo.png" alt="" />
-            { !waiting && <PlayerNameInput autoComplete="false" placeholder="Enter your name" onKeyUp={(e) => {setPlayer(e.target.value); if (e.key === "Enter") startGame(setWaiting, player)}} /> }
-            { !waiting && <JoinGamebutton onClick={() => startGame(setWaiting, player)}>Join Game</JoinGamebutton> }
+            { !waiting && <PlayerNameInput ref={inputRef} onChange={onInputChanged} autoComplete="false" placeholder="Enter your name" onKeyUp={(e) => {setPlayer(e.target.value); if (e.key === "Enter") startGameWrapper() }} /> }
+            { !waiting && <JoinGamebutton onClick={startGameWrapper}>Join Game</JoinGamebutton> }
             { waiting && <GameAboutToStart>{player}, Game about to start...</GameAboutToStart>}
             { waiting && <img src="./assets/spinner.gif" alt="spinner" />}
             { waiting && <PlayersWaiting>{players.length !== 1 ? <><span>{players.length - 1} players</span> {(players.length - 1) === 1 ? 'is' : 'are'} waiting with you</> : "Welcome to lobby. you are the first one. Make yourself at home until others join."}</PlayersWaiting>}
