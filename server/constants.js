@@ -43,7 +43,8 @@ export const questions = [
     codeTemplate: "(arr) => { }"
   },
   {
-    description: "2",
-    validators: [() => true]
+    description: "Write a functoin that accepts a string and returns that string printed backwards.",
+    validators: [code => runCodeIsolated(code, `"string"`) === "gnirts"],
+    codeTemplate: "(str) => { }"
   }
 ];
