@@ -2,7 +2,9 @@ const wsServer = window.location.host.replace("http://","ws://").replace("3000",
 export const socket = new WebSocket(`ws://${wsServer}`, []);
 
 export const sendSocketMessage = (type, args) => {
-    console.log(socket);
+    console.log({socket});
+    console.log({type});
+    console.log({args});
     socket.send(JSON.stringify({
         type,
         ...args

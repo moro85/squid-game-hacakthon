@@ -24,7 +24,8 @@ const GAME_STATES = {
   "STARTED": 2,
   "PASSED": 3,
   "ELIMINATED": 4,
-  "ERROR": 5
+  "ERROR": 5,
+  "GAME_OVER": 6
 }
 
 function App() {
@@ -33,15 +34,10 @@ function App() {
   const [players, setPlayers] = useState([]);
   const [currentQuestion, setCurrentQuestion] = useState({});
 
-  const submitAnswer = (answer) => {
+  const submitAnswer = (answer, qNum) => {
     console.log(answer);
-    const msg = {
-      type: messageType.SUBMIT,
-      qNum: 1,
-      code: answer || 'sample answer'
-    };
-    console.log(socket);
-    socket.send(JSON.stringify(msg));
+    sendSocketMessage(messageType.SUBMIT, {qNum,
+      code: answer || 'sample answer'});
   };
 
   useEffect(() => {
@@ -60,7 +56,8 @@ function App() {
                 setCurrentQuestion({
                   description: msg.description,
                   timeLeft: msg.timeLeft,
-                  codeTemplate: msg.codeTemplate
+                  codeTemplate: msg.codeTemplate,
+                  qNum: msg.qNum
                 })
                 setGameStatus(GAME_STATES.STARTED);
                 break;
@@ -69,6 +66,9 @@ function App() {
                 break;
               case messageState.ELIMINATED:
                 setGameStatus(GAME_STATES.ELIMINATED);
+                break;
+              case messageState.GAME_OVER:
+                setGameStatus(GAME_STATES.GAME_OVER);
                 break;
               default:
                 setGameStatus(GAME_STATES.WAITING_START);
@@ -96,7 +96,7 @@ function App() {
       <Container>
         {gameStatus === GAME_STATES.WAITING && <MainScreen socket={socket} players={players} startGame={(setWaiting, playerName) => changeGameStatus(GAME_STATES.WAITING, setWaiting, playerName)} />}
         {gameStatus === GAME_STATES.GET_READY && <GetReadyScreen />}
-        {gameStatus === GAME_STATES.STARTED && <QuestionScreen question={currentQuestion} submitAnswer={() => submitAnswer()} />}
+        {gameStatus === GAME_STATES.STARTED && <QuestionScreen question={currentQuestion} submitAnswer={submitAnswer} />}
         {gameStatus === GAME_STATES.PASSED && <PassScreen playerLeftNumber={30} playerEliminatedNumber={5}/>}
         {gameStatus === GAME_STATES.ELIMINATED && <EliminatedScreen playerName={456} playerLeftNumber={20}/>}
         {gameStatus === GAME_STATES.ERROR && <ErrorScreen />}
