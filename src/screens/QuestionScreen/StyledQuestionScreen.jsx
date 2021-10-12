@@ -59,7 +59,7 @@ export const EditorContainer = styled.div`
     height: 300px;
     border-radius: 4px;
   
-  .token .operator {
+  .token.operator {
     background: #000;
   }
 `;
