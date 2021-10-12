@@ -14,7 +14,7 @@ const StyledProgressBar = styled.div`
   top: 0;
   display: flex;
   > div {
-    background: #fff;
+    background: ${({width})=> width < 50 ? 'yellow' : '#fff'};
     width: ${({width})=>width}%;
     transition: .18s all;
   }

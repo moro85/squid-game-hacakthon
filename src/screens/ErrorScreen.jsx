@@ -35,7 +35,7 @@ const ErrorScreen = ({ playerName, playerLeftNumber }) => {
     return (
         <StyledErrorScreen>
             <h1>Oops, something went wrong! <br /><span> 😟</span></h1>
-            <h2>You got disconnected.</h2>
+            <h2>Either you got disconnected or the server is down.</h2>
             <h2>Refresh the page, it may help.</h2>
         </StyledErrorScreen>
     )
