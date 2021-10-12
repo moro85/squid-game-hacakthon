@@ -1,8 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react'
 import styled from 'styled-components';
-import { Player, useAudio } from '../hooks/use-audio';
+import { useAudio } from '../hooks/use-audio';
 import { colors } from '../utils/colors';
-import { playSound, SCARY_TUNE } from '../utils/sound';
+import { SCARY_TUNE } from '../utils/sound';
+
 
 const StyledMainScreen = styled.div`
     display: flex;
@@ -104,13 +105,13 @@ const PlayersWaiting = styled.div`
     }
 `;
 
-
 const MainScreen = ({startGame, players}) => {
 
     const [waiting, setWaiting] = useState(false)
     const [player, setPlayer] = useState("");
+    const { setPlaying: shouldPlayScarySound, playing } = useAudio(SCARY_TUNE);
+
     const inputRef = useRef();
-    const { setPlaying: shouldPlayScarySound } = useAudio(SCARY_TUNE);
 
     useEffect(() => {
         inputRef.current.focus();
@@ -121,17 +122,21 @@ const MainScreen = ({startGame, players}) => {
     }, []);
 
     const onInputChanged = (e) => {
-        return shouldPlayScarySound(e.target.value % 2 !== 0);
+        // just for fun & cripiyness, playing the sound if there is value on the input
+        const shouldPlayMusic = !!e.target.value;
+        if (playing !== shouldPlayMusic) {
+            shouldPlayScarySound(shouldPlayMusic);
+        }
     };
-
+    
     const startGameWrapper = () => {
+        console.log('startGameWrapper, hence stopping music')
         shouldPlayScarySound(false);
         return startGame(setWaiting, player);
     };
     
     return (
         <StyledMainScreen>
-            <Player src={SCARY_TUNE} />
             <SquidGameLogo src="./assets/sg_logo.png" alt="" />
             { !waiting && <PlayerNameInput ref={inputRef} onChange={onInputChanged} autoComplete="false" placeholder="Enter your name" onKeyUp={(e) => {setPlayer(e.target.value); if (e.key === "Enter") startGameWrapper() }} /> }
             { !waiting && <JoinGamebutton onClick={startGameWrapper}>Join Game</JoinGamebutton> }
@@ -147,7 +152,7 @@ const MainScreen = ({startGame, players}) => {
             </MainScreenLog>
             { waiting && <Persons>
                 {players.map((v)=>
-                        <Person src={`./assets/person${Math.round(Math.random() * (4 - 1))}.png`} key={v} x={
+                        <Person src={`./assets/person${Math.round(Math.random() * (4 - 1)) + 1}.png`} key={v} x={
                         Math.floor(Math.random() * (1100 - 0) + 0)
                         } shouldFlip={Math.round(Math.random() * (1 - 0)) + 1} alt="" />
                     )
