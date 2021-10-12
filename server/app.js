@@ -145,7 +145,8 @@ registerOnJoin((playerName, ws) => {
       broadcast({
         type: messageType.STATUS,
         state: messageState.WAITING_START,
-        players: [...wss.clients].map(c => c.playerName)
+        players: [...wss.clients].map(c => c.playerName),
+        maxPlayerCount
       });
     }
   }

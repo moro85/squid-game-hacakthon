@@ -40,7 +40,7 @@ export const questions = [
     description:
       "Write a function that accepts an array of native numbers as a parameter and returns the sum of multiplication of every two adjacent cells",
     validators: [code => runCodeIsolated(code, `[1,2,3]`) === 8],
-    codeTemplate: "(arr) => { }"
+    codeTemplate: "(arr) => {\n  \n}"
   },
   {
     description: "Write a functoin that accepts a string and returns that string printed backwards.",

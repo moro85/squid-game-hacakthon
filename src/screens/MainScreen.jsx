@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { useAudio } from '../hooks/use-audio';
 import { colors } from '../utils/colors';
 import { SCARY_TUNE } from '../utils/sound';
+import { useAppState } from '../providers/AppStateProvider';
 
 
 const StyledMainScreen = styled.div`
@@ -106,6 +107,7 @@ const PlayersWaiting = styled.div`
 `;
 
 const MainScreen = ({startGame, players}) => {
+    const { appState: { maxPlayerCount } } = useAppState();
 
     const [waiting, setWaiting] = useState(false)
     const [player, setPlayer] = useState("");
@@ -135,14 +137,16 @@ const MainScreen = ({startGame, players}) => {
         return startGame(setWaiting, player);
     };
     
+    const isSinglePlayerWaitingWithYou = players.length === 2;
+
     return (
         <StyledMainScreen>
             <SquidGameLogo src="./assets/sg_logo.png" alt="" />
             { !waiting && <PlayerNameInput ref={inputRef} onChange={onInputChanged} autoComplete="false" placeholder="Enter your name" onKeyUp={(e) => {setPlayer(e.target.value); if (e.key === "Enter") startGameWrapper() }} /> }
             { !waiting && <JoinGamebutton onClick={startGameWrapper}>Join Game</JoinGamebutton> }
-            { waiting && <GameAboutToStart>{player}, Game about to start...</GameAboutToStart>}
+            { waiting && <GameAboutToStart>{player ? `${player}, ` : ''}Game about to start...</GameAboutToStart>}
             { waiting && <img src="./assets/spinner.gif" alt="spinner" />}
-            { waiting && <PlayersWaiting>{players.length !== 1 ? <><span>{players.length - 1} players</span> {(players.length - 1) === 1 ? 'is' : 'are'} waiting with you</> : "Welcome to lobby. you are the first one. Make yourself at home until others join."}</PlayersWaiting>}
+            { waiting && players.length && <PlayersWaiting>{players.length !== 1 ? <><span>{players.length - 1} {`player${!isSinglePlayerWaitingWithYou ? "s" : ""}`}</span> {isSinglePlayerWaitingWithYou ? 'is' : 'are'} waiting with you, until all {maxPlayerCount} of you join.</> : `Welcome to lobby. you are the first one. Make yourself at home until all ${maxPlayerCount} of you join.`}</PlayersWaiting>}
             <MainScreenLog>
                 <ul>
                     {players && players.slice(-2).map((v)=>

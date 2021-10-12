@@ -13,6 +13,7 @@ import GameOverScreen from './screens/GameOverScreen/GameOverScreen';
 import { sendSocketMessage, socket } from './utils/socket';
 import ErrorScreen from './screens/ErrorScreen';
 import { useAudio } from './hooks/use-audio';
+import { useAppState } from './providers/AppStateProvider';
 
 const Container = styled.div`
   width: 1200px;
@@ -31,6 +32,7 @@ const GAME_STATES = {
 }
 
 function App() {
+  const { setAppState } = useAppState();
   const [gameStatus, setGameStatus] = useState(GAME_STATES.WAITING);
   const [players, setPlayers] = useState([]);
   const [winners, setWinners] = useState([]);
@@ -52,6 +54,7 @@ function App() {
             switch (msg.state) {
               case messageState.WAITING_START:
                 setPlayers(msg.players);
+                setAppState({ maxPlayerCount: msg.maxPlayerCount });
                 playNewPlayerSound();
                 break;
               case messageState.QUESTION:
