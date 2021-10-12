@@ -11,6 +11,7 @@ import PassScreen from './screens/PassScreen';
 import EliminatedScreen from './screens/EliminatedScreen';
 import { sendSocketMessage, socket } from './utils/socket';
 import ErrorScreen from './screens/ErrorScreen';
+import { useAudio } from './hooks/use-audio';
 
 const Container = styled.div`
   width: 1200px;
@@ -28,10 +29,11 @@ const GAME_STATES = {
 }
 
 function App() {
-
   const [gameStatus, setGameStatus] = useState(GAME_STATES.WAITING);
   const [players, setPlayers] = useState([]);
   const [currentQuestion, setCurrentQuestion] = useState({});
+  const { setPlaying: setPlayNewPlaySound } = useAudio(NEW_PLAYER_SOUND);
+  const playNewPlayerSound = () => setPlayNewPlaySound(true);
 
   const submitAnswer = (answer) => {
     console.log(answer);
@@ -53,8 +55,7 @@ function App() {
             switch (msg.state) {
               case messageState.WAITING_START:
                 setPlayers(msg.players);
-                playSound(NEW_PLAYER_SOUND);
-                console.log('played sound!')
+                playNewPlayerSound();
                 break;
               case messageState.QUESTION: 
                 setCurrentQuestion({
