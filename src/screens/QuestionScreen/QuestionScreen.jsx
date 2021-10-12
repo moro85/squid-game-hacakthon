@@ -27,10 +27,11 @@ export const QuestionScreen = ({ submitAnswer, question }) => {
   console.log({question});
 
   useEffect(() => {
+    setCursorAtMiddleOfText();
     setInterval(()=>{
       setTimeLeft(timeLeft => timeLeft -= 1000);
     },1000);
-  },[])
+  }, [])
 
   return (
     <StyledQuestionScreen>
@@ -41,7 +42,7 @@ export const QuestionScreen = ({ submitAnswer, question }) => {
       <EditorContainer>
         <Editor
           value={code}
-          onValueChange={(code) => setCode(code)}
+          onValueChange={setCode}
           highlight={(code) => highlight(code, languages.js)}
           padding={10}
           style={{
@@ -54,3 +55,10 @@ export const QuestionScreen = ({ submitAnswer, question }) => {
     </StyledQuestionScreen>
   )
 }
+
+function setCursorAtMiddleOfText() {
+  const element = Array.from(document.getElementsByTagName('textarea'))[0];
+  element.focus();
+  const position = element.value.length - 2;
+  element.setSelectionRange(position, position);
+} 
