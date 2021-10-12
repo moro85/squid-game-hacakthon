@@ -13,3 +13,8 @@ export const messageType = {
     "JOIN": "Join",
     "SUBMIT": "Submit"
 }
+
+export const deviceType = {
+    PHONE: "Phone",
+    COMPUTER: "Computer"
+}

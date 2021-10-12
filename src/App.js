@@ -4,7 +4,7 @@ import './App.css';
 import './animate.css'
 import MainScreen from './screens/MainScreen';
 import GetReadyScreen from './screens/GetReadyScreen';
-import { messageState, messageType } from './utils/constants';
+import { deviceType, messageState, messageType } from './utils/constants';
 import { playSound, NEW_PLAYER_SOUND } from './utils/sound';
 import { QuestionScreen } from './screens/QuestionScreen/QuestionScreen';
 import PassScreen from './screens/PassScreen';
@@ -14,6 +14,7 @@ import { sendSocketMessage, socket } from './utils/socket';
 import ErrorScreen from './screens/ErrorScreen';
 import { useAudio } from './hooks/use-audio';
 import { useAppState } from './providers/AppStateProvider';
+import { useMediaQuery } from 'beautiful-react-hooks'; 
 
 const Container = styled.div`
   width: 1200px;
@@ -39,6 +40,7 @@ function App() {
   const [currentQuestion, setCurrentQuestion] = useState({});
   const { setPlaying: setPlayNewPlaySound } = useAudio(NEW_PLAYER_SOUND);
   const playNewPlayerSound = () => setPlayNewPlaySound(true);
+  const isSmall = useMediaQuery('(max-width: 48rem)'); 
 
   const submitAnswer = (answer, qNum) => {
     console.log(answer);
@@ -46,6 +48,7 @@ function App() {
   };
 
   useEffect(() => {
+    setAppState({ deviceType: isSmall ? deviceType.PHONE : deviceType.COMPUTER });
     socket.onopen = function (event) {
       socket.onmessage = function (event) {
         const msg = JSON.parse(event.data);
@@ -85,7 +88,7 @@ function App() {
     };
 
     socket.onclose = function (event) {
-      if (gameStatus !== GAME_STATES.ELIMINATED) {
+      if (gameStatus !== GAME_STATES.ELIMINATED ) {
         setGameStatus(GAME_STATES.ERROR);
       }
     }

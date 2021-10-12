@@ -107,7 +107,7 @@ const PlayersWaiting = styled.div`
 `;
 
 const MainScreen = ({startGame, players}) => {
-    const { appState: { maxPlayerCount } } = useAppState();
+    const { appState: { maxPlayerCount, deviceType } } = useAppState();
 
     const [waiting, setWaiting] = useState(false)
     const [player, setPlayer] = useState("");
@@ -121,7 +121,7 @@ const MainScreen = ({startGame, players}) => {
             console.log('will unmount')
             shouldPlayScarySound(false)
         }
-    }, []);
+    }, [shouldPlayScarySound]);
 
     const onInputChanged = (e) => {
         // just for fun & cripiyness, playing the sound if there is value on the input
