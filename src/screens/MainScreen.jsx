@@ -25,7 +25,7 @@ const JoinGamebutton = styled.button`
     border-radius: 1.5rem;
     color: #fff;
     border: 0;
-    font-size: 5em;
+    font-size: 2em;
     padding-left: 3rem;
     padding-right: 3rem;
     margin: 2rem;
@@ -40,7 +40,7 @@ const MainScreenLog = styled.div`
     width: 300px;
     font-size: 18px;
     color: ${colors.lightGray};
-    margin-top: 2em;
+    margin-top: 2em;§
     position: relative;
     ul {
         list-style-type: none;
