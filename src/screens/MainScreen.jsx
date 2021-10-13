@@ -79,6 +79,7 @@ const PlayerNameInput = styled.input`
     border-top-left-radius: 8px;
     background-color: transparent;
     color: ${colors.squidGameDark};
+    width: 50%;
 `;
 
 const GameAboutToStart = styled.div`
