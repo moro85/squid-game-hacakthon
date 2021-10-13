@@ -7,7 +7,7 @@ import "prismjs/themes/prism.css";
 import { StyledQuestionScreen, StyledQuestionSubmitButton, EditorContainer, StyledProgressBar, QuestionDescription } from './StyledQuestionScreen';
 
 export const QuestionScreen = ({ submitAnswer, question }) => {
-  const [code, setCode] = useState(question?.codeTemplate || "");
+  const [code, setCode] = useState(question?.codeTemplate || "(arr) => {\n   return 5;\n}");
   const [timeLeft, setTimeLeft] = useState(question.timeLeft || 30000);
 
   useEffect(() => {
