@@ -29,12 +29,19 @@ const StyledPassScreen = styled.div`
     }
 `;
 
-const PassScreen = ({ playerLeftNumber, playerEliminatedNumber }) => {
+const animationClasses = 'animate__animated animate__fadeInDown';
+
+const PassScreen = ({ playerName, playersStats: { passedUsers, eliminatedUsers, stillPlayingUsers } }) => {
+    const eliminatedText = `${eliminatedUsers} players have met their grave 🪦`;
+    const passedText = `${passedUsers} players are still with you`;
+    const waitingText = `${stillPlayingUsers} players are still waiting to face their destiny 💀/🏅 before we continue to the next round...`;
     return (
         <StyledPassScreen>
-            <h1 className="animate__animated animate__fadeInDown">You Passed! <br/> 💵</h1>
-            <h2 className="animate__animated animate__fadeInDown">Waiting for all players to submit or fail to continue to the next round...</h2>
-            <img className="animate__animated animate__fadeInDown" src="./assets/spinner_white.gif" alt="" />
+            <h1 className={animationClasses}>{`${playerName} Passed!`} <br/> 🏅</h1>
+            <h2 className={animationClasses}>{ eliminatedText }</h2>
+            <h2 className={animationClasses}>{ passedText }</h2>
+            <h2 className={animationClasses}>{ waitingText }</h2>
+            <img className={animationClasses} src="./assets/spinner_white.gif" alt="" />
         </StyledPassScreen>
     )
 }
