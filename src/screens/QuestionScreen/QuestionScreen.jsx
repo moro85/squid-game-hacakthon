@@ -9,15 +9,19 @@ import { StyledQuestionScreen, StyledQuestionSubmitButton, EditorContainer } fro
 
 const StyledProgressBar = styled.div`
   width: 100%;
-  height: 30px;
+  height: 1.875rem;
   position: absolute;
   top: 0;
   display: flex;
   > div {
-    background: ${({width})=> width < 50 ? 'yellow' : '#fff'};
-    width: ${({width})=>width}%;
+    background: ${({ width }) => width < 50 ? 'yellow' : width < 25 ? 'red' : '#fff'};
+    width: ${({ width }) => width}%;
     transition: .18s all;
   }
+`;
+
+const QuestionDescription = styled.h2`
+  width: 60%;
 `;
 
 export const QuestionScreen = ({ submitAnswer, question }) => {
@@ -26,18 +30,19 @@ export const QuestionScreen = ({ submitAnswer, question }) => {
 
   useEffect(() => {
     setCursorAtMiddleOfText();
-    setInterval(()=>{
+    setInterval(() => {
       setTimeLeft(timeLeft => timeLeft -= 1000);
-    },1000);
+    }, 1000);
   }, [])
 
   return (
     <StyledQuestionScreen>
       <StyledProgressBar width={Math.floor(timeLeft / question.timeLeft * 100)}><div></div></StyledProgressBar>
       <h3>Challange #1:</h3>
-      <h2>{question.description}</h2>
-      <p>You have {parseInt(timeLeft)/1000} seconds to finish</p>
+      <QuestionDescription>{question.description}</QuestionDescription>
+      <p>You have {parseInt(timeLeft) / 1000} seconds to finish</p>
       <EditorContainer>
+        <textarea value={code} onChange={({ target: { value: val } }) => setCode(val)} ></textarea>
         <Editor
           value={code}
           onValueChange={setCode}
@@ -49,7 +54,7 @@ export const QuestionScreen = ({ submitAnswer, question }) => {
           }}
         />
       </EditorContainer>
-      <StyledQuestionSubmitButton onClick={() => {submitAnswer(code, question.qNum);}}>Submit</StyledQuestionSubmitButton>
+      <StyledQuestionSubmitButton onClick={() => submitAnswer(code, question.qNum)}>Submit</StyledQuestionSubmitButton>
     </StyledQuestionScreen>
   )
 }
@@ -59,4 +64,4 @@ function setCursorAtMiddleOfText() {
   element.focus();
   const position = element.value.length - 2;
   element.setSelectionRange(position, position);
-} 
+}

@@ -55,8 +55,8 @@ export const StyledQuestionSubmitButton = styled.button`
 
 export const EditorContainer = styled.div`
     background: #000;
-    width: 500px;
-    height: 300px;
+    width: 30rem;
+    height: 10rem;
     border-radius: 4px;
   
   .token.operator {
