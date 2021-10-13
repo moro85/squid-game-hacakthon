@@ -23,6 +23,7 @@ body {
   align-items: center;
   background: rgb(66,66,66);
   background: linear-gradient(22deg, rgba(66,66,66,1) 0%, rgba(0,0,0,1) 100%);
+  overflow: hidden;
 }
 
 code {
