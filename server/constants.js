@@ -19,7 +19,7 @@ export const messageType = {
   };
 
 export const questionTimeout = 30000 * 10;
-export const maxPlayerCount = 5;
+export const maxPlayerCount = 2;
 
 function runCodeIsolated(code, params) {
     try {
@@ -45,7 +45,7 @@ export const questions = [
   },
   {
     description: "Write a function that accepts a string and returns s",
-    validators: [code => runCodeIsolated(code, `"string"`) === "gnirts"],
+    validators: [code => runCodeIsolated(code, `"string"`) === "s"],
     codeTemplate: "(str) => {\n  \n}"
   }
 ];
