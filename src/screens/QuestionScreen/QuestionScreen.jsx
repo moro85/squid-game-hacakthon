@@ -5,24 +5,7 @@ import { highlight, languages } from "prismjs/components/prism-core";
 import "prismjs/components/prism-clike";
 import "prismjs/components/prism-javascript";
 import "prismjs/themes/prism.css";
-import { StyledQuestionScreen, StyledQuestionSubmitButton, EditorContainer } from './StyledQuestionScreen';
-
-const StyledProgressBar = styled.div`
-  width: 100%;
-  height: 1.875rem;
-  position: absolute;
-  top: 0;
-  display: flex;
-  > div {
-    background: ${({ width }) => width < 50 ? 'yellow' : width < 25 ? 'red' : '#fff'};
-    width: ${({ width }) => width}%;
-    transition: .18s all;
-  }
-`;
-
-const QuestionDescription = styled.h2`
-  width: 60%;
-`;
+import { StyledQuestionScreen, StyledQuestionSubmitButton, EditorContainer, StyledProgressBar, QuestionDescription } from './StyledQuestionScreen';
 
 export const QuestionScreen = ({ submitAnswer, question }) => {
   const [code, setCode] = useState(question.codeTemplate);
