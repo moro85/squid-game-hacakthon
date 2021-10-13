@@ -38,7 +38,7 @@ function gameOver(ws) {
     type: messageType.STATUS,
     state: messageState.GAME_OVER
   }));
-  ws.close();
+  setTimeout(() => ws.close(), 1000);
 }
 
 let iterationHandle = null;

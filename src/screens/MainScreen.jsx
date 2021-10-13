@@ -29,6 +29,8 @@ const JoinGamebutton = styled.button`
     padding: .5em 1em;
     margin: 2rem;
     cursor: pointer;
+    filter: ${({ disabled }) => `grayscale(${disabled ? 1 : 0})`};
+    pointer-events: ${({ disabled }) => disabled ? 'none' : 'all'};
     transition: .18s all;
     &:hover {
         transform: scale(1.1);
@@ -78,7 +80,7 @@ const PlayerNameInput = styled.input`
     border-top-right-radius: 8px;
     border-top-left-radius: 8px;
     background-color: transparent;
-    color: ${colors.squidGameDark};
+    color: ${({ isInvalid }) => isInvalid ? 'red' : colors.squidGameDark};
     width: 85%;
 `;
 
@@ -116,6 +118,7 @@ const MainScreen = ({startGame, players}) => {
     const { appState: { maxPlayerCount, deviceType } } = useAppState();
 
     const [waiting, setWaiting] = useState(false)
+    const [isInvalidPlayerName, setIsInvalidPlayerName] = useState(true)
     const [player, setPlayer] = useState("");
     const { setPlaying: shouldPlayScarySound, playing } = useAudio(SCARY_TUNE);
 
@@ -135,21 +138,40 @@ const MainScreen = ({startGame, players}) => {
             shouldPlayScarySound(shouldPlayMusic);
         }
     };
-    
+
     const startGameWrapper = () => {
-        shouldPlayScarySound(false);
-        setWaiting(true);
-        return startGame(player);
+        const alphaNumericRegex = /^[a-zA-Z0-9]+$/;
+        const isValidName = alphaNumericRegex.test(player);
+        if (isValidName) {
+            shouldPlayScarySound(false);
+            setWaiting(true);
+            return startGame(player);
+        }
     };
-    
+
+    const onKeyUp = (e) => {
+        const playerName = e.target.value.trim();
+        setPlayer(playerName);
+        const alphaNumericRegex = /^[a-z0-9]+$/i;
+        const isValidName = alphaNumericRegex.test(playerName);
+        if (isValidName) {
+            setIsInvalidPlayerName(false);
+            if (e.key === "Enter") {
+                startGameWrapper();
+            }
+        } else {
+            setIsInvalidPlayerName(true);
+        }
+    };
+
     const isSinglePlayerWaitingWithYou = players.length === 2;
 
     return (
         <StyledMainScreen>
             <SquidGameLogo src="./assets/sg_logo.png" alt="" isSmall={deviceType}/>
-            { !waiting && <PlayerNameInput ref={inputRef} onChange={onInputChanged} autoComplete="false" placeholder="Enter your name" onKeyUp={(e) => {setPlayer(e.target.value); if (e.key === "Enter") startGameWrapper() }} /> }
-            { !waiting && <JoinGamebutton type="button" onClick={startGameWrapper}>Join Game</JoinGamebutton> }
-            { waiting && <GameAboutToStart>{player ? `${player}, ` : ''}Game about to start...</GameAboutToStart>}
+            { !waiting && <PlayerNameInput ref={inputRef} onChange={onInputChanged} isInvalid={isInvalidPlayerName} autoComplete="false" placeholder="Enter your name" onKeyUp={onKeyUp} /> }
+            { !waiting && <JoinGamebutton type="button" disabled={isInvalidPlayerName} onClick={startGameWrapper}>Join Game</JoinGamebutton> }
+            { waiting && <GameAboutToStart>{player ? `${player}, ` : ''}The game is about to start...</GameAboutToStart>}
             { waiting && <img src="./assets/spinner.gif" alt="spinner" />}
             { waiting && players.length!==0 && <PlayersWaiting>{players.length !== 1 ? <><span>{players.length - 1} {`player${!isSinglePlayerWaitingWithYou ? "s" : ""}`}</span> {isSinglePlayerWaitingWithYou ? 'is' : 'are'} waiting with you, game will start when all {maxPlayerCount} of you join.</> : `Welcome to lobby. you are the first one. Make yourself at home until all ${maxPlayerCount} of you join.`}</PlayersWaiting>}
             <MainScreenLog>
