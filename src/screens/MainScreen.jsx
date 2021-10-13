@@ -8,7 +8,7 @@ import { SCARY_TUNE } from '../utils/constants';
 
 const StyledMainScreen = styled.div`
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
     flex-direction: column;
     padding: 1em;
