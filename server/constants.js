@@ -19,7 +19,7 @@ export const messageType = {
   };
 
 export const questionTimeout = 30000 * 10;
-export const maxPlayerCount = 5;
+export const maxPlayerCount = 2;
 
 function runCodeIsolated(code, params) {
     try {
@@ -49,7 +49,7 @@ export const questions = [
     codeTemplate: "(str) => {\n  \n}"
   },
   {
-    description: "Write a the constant function the returns the number 42",
+    description: "Write the constant function which always returns the number 42",
     validators: [code => runCodeIsolated(code, `"string"`) === 42],
     codeTemplate: "() => {\n  \n}"
   },

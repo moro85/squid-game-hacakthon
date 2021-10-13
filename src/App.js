@@ -86,9 +86,9 @@ function App() {
                   stillPlayingUsers: msg.stillPlayingUsers,
                   total: msg.total
                 })
+              break;
               default:
                 setGameStatus(GAME_STATES.WAITING_START);
-              break;
             }
         }
       }
