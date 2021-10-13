@@ -27,7 +27,7 @@ function runCodeIsolated(code, params) {
         timeout: 1000,
         sandbox: {}
       });
-  
+
       console.log({code});
       console.log({params});
 
@@ -44,36 +44,36 @@ export const questions = [
     description:
       "Write a function that accepts an array of native numbers as a parameter and returns the sum of multiplication of every two adjacent cells",
     validators: [code => runCodeIsolated(code, `[1,2,3]`) === 8],
-    codeTemplate: "(arr) => {\n return 5; \n}"
+    codeTemplate: "(arr) => {\n   return 5;\n}"
   },
   {
     description: "Write a function that accepts a string and reverse it!",
     validators: [code => runCodeIsolated(code, `"string"`) === "gnirts"],
-    codeTemplate: "(str) => {\n return ''; \n}"
+    codeTemplate: "(str) => {\n   return '';\n}"
   },
   {
     description: "Write the constant function which always returns the number 42",
     validators: [code => runCodeIsolated(code, `"string"`) === 42],
-    codeTemplate: "() => {\n return 42; \n}"
+    codeTemplate: "() => {\n   return 42;\n}"
   },
   {
     description: "Write a function that accepts an array and return its sum",
     validators: [code => runCodeIsolated(code, `[1,2,3]`) === 6],
-    codeTemplate: "(arr) => {\n return 5; \n}"
+    codeTemplate: "(arr) => {\n   return 5;\n}"
   },
   {
     description: "Write a function that accepts a number and returns how many digit it includes",
     validators: [code => runCodeIsolated(code, `123`) === 3],
-    codeTemplate: "(num) => {\n return 5; \n}"
+    codeTemplate: "(num) => {\n   return 5;\n}"
   },
   {
     description: "Write a function that accepts a url as a string and returns only the domain name",
     validators: [code => runCodeIsolated(code, `https://www.google.com/search?val=mock`) === 'google'],
-    codeTemplate: "(url) => {\n return ''; \n}"
+    codeTemplate: "(url) => {\n   return '';\n}"
   },
   {
     description: "Write a function that accepts a string and a delimiter and returns the substring which starts from the first delimiter and ends with the last",
     validators: [code => runCodeIsolated(code, `some#mock#string`) === 'google'],
-    codeTemplate: "(str, delimiter) => {\n return ''; \n}"
+    codeTemplate: "(str, delimiter) => {\n   return '';\n}"
   },
 ].sort(() => 0.5 - Math.random());
