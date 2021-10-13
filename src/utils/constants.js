@@ -10,6 +10,7 @@ export const messageState = {
 
 export const messageType = {
     "STATUS": "Status",
+    "USERS": "Users",
     "JOIN": "Join",
     "SUBMIT": "Submit"
 }

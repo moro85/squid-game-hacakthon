@@ -129,6 +129,14 @@ registerOnSubmit((message, ws) => {
       gameState.currentQuestion++;
       playNextQuestion();
     }
+
+    broadcast({
+      type: messageType.USERS,
+      passedUsers: [...wss.clients].filter(c => c.status === messageState.PASSED).length,
+      eliminatedUsers: maxPlayerCount - [...wss.clients].length,
+      stillPlayingUsers: [...wss.clients].filter(c => c.status === messageState.PLAYING).length,
+      total: maxPlayerCount
+    });
   }
 });
 
