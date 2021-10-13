@@ -4,7 +4,7 @@ import { colors } from '../utils/colors';
 
 const StyledErrorScreen = styled.div`
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
     flex-direction: column;
     height: 100%;

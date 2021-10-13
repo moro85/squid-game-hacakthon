@@ -42,25 +42,5 @@ export const questions = [
       "Write a function that accepts an array of native numbers as a parameter and returns the sum of multiplication of every two adjacent cells",
     validators: [code => runCodeIsolated(code, `[1,2,3]`) === 8],
     codeTemplate: "(arr) => {\n  \n}"
-  },
-  {
-    description: "Write a function that accepts a string and returns s",
-    validators: [code => runCodeIsolated(code, `"string"`) === "gnirts"],
-    codeTemplate: "(str) => {\n  \n}"
-  },
-  {
-    description: "Write a functoin that accepts a string and returns its length.",
-    validators: [code => runCodeIsolated(code, `"string"`) === 6],
-    codeTemplate: "(str) => {\n  \n}"
-  },
-  {
-    description: "Write a functoin that accepts an array on nums and return the sum of all items.",
-    validators: [code => runCodeIsolated(code, `[4,5,6]`) === 15],
-    codeTemplate: "(arr) => {\n  \n}"
-  },
-  {
-    description: "Write a functoin that accepts number returns its digits count.",
-    validators: [code => runCodeIsolated(code, `123`) === 3],
-    codeTemplate: "(num) => {\n  \n}"
   }
 ];
