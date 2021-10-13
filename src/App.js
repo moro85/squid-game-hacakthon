@@ -4,7 +4,7 @@ import './App.css';
 import './animate.css'
 import MainScreen from './screens/MainScreen';
 import GetReadyScreen from './screens/GetReadyScreen';
-import { deviceType, messageState, messageType, NEW_PLAYER_SOUND } from './utils/constants';
+import { deviceType, messageState, messageType, NEW_PLAYER_SOUND, initialPlayersStats } from './utils/constants';
 import { QuestionScreen } from './screens/QuestionScreen/QuestionScreen';
 import PassScreen from './screens/PassScreen';
 import EliminatedScreen from './screens/EliminatedScreen';
@@ -34,7 +34,7 @@ function App() {
   const { setAppState, appState: { appError } } = useAppState();
   const [gameStatus, setGameStatus] = useState(GAME_STATES.WAITING);
   const [players, setPlayers] = useState([]);
-  const [winners, setWinners] = useState([]);
+  const [playersStats, setPlayersStats] = useState(initialPlayersStats);
   const [currentQuestion, setCurrentQuestion] = useState({});
   const { setPlaying: setPlayNewPlaySound } = useAudio(NEW_PLAYER_SOUND);
   const playNewPlayerSound = () => setPlayNewPlaySound(true);
@@ -44,7 +44,7 @@ function App() {
     sendSocketMessage(messageType.SUBMIT, { qNum, code: answer || 'sample answer' });
   };
 
-  useEffect(() => { 
+  useEffect(() => {
     setAppState({ deviceType: deviceType.PHONE });
   }, [])
 
@@ -61,12 +61,7 @@ function App() {
                 playNewPlayerSound();
                 break;
               case messageState.QUESTION:
-                setCurrentQuestion({
-                  description: msg.description,
-                  timeLeft: msg.timeLeft,
-                  codeTemplate: msg.codeTemplate,
-                  qNum: msg.qNum
-                })
+                setCurrentQuestion(msg);
                 setGameStatus(GAME_STATES.STARTED);
                 break;
               case messageState.PASSED:
@@ -77,8 +72,14 @@ function App() {
                 break;
               case messageState.GAME_OVER:
                 setGameStatus(GAME_STATES.GAME_OVER);
-                setWinners(msg.winners);
                 break;
+              case messageState.USERS:
+                setPlayersStats({
+                  passedUsers: msg.passedUsers,
+                  eliminatedUsers: msg.eliminatedUsers,
+                  stillPlayingUsers: msg.stillPlayingUsers,
+                  total: msg.total
+                })
               default:
                 setGameStatus(GAME_STATES.WAITING_START);
               break;
@@ -110,11 +111,11 @@ function App() {
       <Container>
         {gameStatus === GAME_STATES.WAITING && <MainScreen socket={socket} players={players} startGame={(playerName) => changeGameStatus(GAME_STATES.WAITING, playerName)} />}
         {gameStatus === GAME_STATES.GET_READY && <GetReadyScreen />}
-        {gameStatus === GAME_STATES.STARTED && <QuestionScreen question={currentQuestion} submitAnswer={submitAnswer} />}
-        {gameStatus === GAME_STATES.PASSED && <PassScreen playerLeftNumber={30} playerEliminatedNumber={5}/>}
-        {gameStatus === GAME_STATES.ELIMINATED && <EliminatedScreen playerName={456} playerLeftNumber={20}/>}
+        {gameStatus === GAME_STATES.STARTED && <QuestionScreen question={currentQuestion} submitAnswer={submitAnswer} playersStats={playersStats} />}
+        {gameStatus === GAME_STATES.PASSED && <PassScreen playersStats={playersStats} />}
+        {gameStatus === GAME_STATES.ELIMINATED && <EliminatedScreen playerName={456} playersStats={playersStats} />}
         {(gameStatus === GAME_STATES.ERROR || appError) && <ErrorScreen />}
-        {gameStatus === GAME_STATES.GAME_OVER && <GameOverScreen winners={winners} />}
+        {gameStatus === GAME_STATES.GAME_OVER && <GameOverScreen playersStats={playersStats} />}
       </Container>
     </div>
   );

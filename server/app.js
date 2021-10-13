@@ -16,10 +16,8 @@ import {
   wss
 } from "./socket-handler";
 
-let gameState = {
-  currentQuestion: 0,
-  isStarted: false
-};
+let gameState = getInitialGameState();
+
 
 function validateSubmission(code, question) {
   if (code) {
@@ -29,10 +27,7 @@ function validateSubmission(code, question) {
 }
 
 function resetGame() {
-  gameState = {
-    currentQuestion: 0,
-    isStarted: false
-  };
+  gameState = getInitialGameState();
   wss.clients.forEach(c => {
     c.close();
   })
@@ -53,19 +48,24 @@ function playNextQuestion() {
     type: messageType.STATUS,
     state: messageState.QUESTION,
     qNum: gameState.currentQuestion,
+    deFactoQuestionSerialNumber: gameState.deFactoQuestionSerialNumber,
     totalQ: questions.length,
-    description: questions[gameState.currentQuestion].description,
+    description: gameState.dyanmicQuestionsArray[gameState.currentQuestion].description,
     timeLeft: questionTimeout,
-    codeTemplate: questions[gameState.currentQuestion].codeTemplate
+    codeTemplate: gameState.dyanmicQuestionsArray[gameState.currentQuestion].codeTemplate
   });
+
+  removeCurrentQuestionFromArray();
+
   [...wss.clients]
     .filter(c => c.status !== messageState.ELIMINATED)
     .forEach(function each(client) {
       client.status = messageState.PLAYING;
     });
   iterationHandle = setTimeout(() => {
-    gameState.currentQuestion++;
-    if (gameState.currentQuestion === questions.length) {
+    gameState.deFactoQuestionSerialNumber++;
+    gameState.currentQuestion = getRandomIndex(gameState.dyanmicQuestionsArray.length);
+    if (!gameState.dyanmicQuestionsArray.length) {
       gameState.state = messageState.GAME_OVER;
       broadcast({
         type: messageType.STATUS,
@@ -99,7 +99,7 @@ registerOnSubmit((message, ws) => {
     ws.status !== messageState.ELIMINATED
   ) {
     if (
-      validateSubmission(message.code, questions[gameState.currentQuestion])
+      validateSubmission(message.code, gameState.dyanmicQuestionsArray[gameState.currentQuestion])
     ) {
       ws.status = messageState.PASSED;
       ws.send(
@@ -109,7 +109,7 @@ registerOnSubmit((message, ws) => {
         })
       );
 
-      if (gameState.currentQuestion + 1 === questions.length) {
+      if (!gameState.dyanmicQuestionsArray.length) {
         gameOver(ws);
         return;
       }
@@ -126,7 +126,8 @@ registerOnSubmit((message, ws) => {
 
     if (![...wss.clients].filter(c => c.status === messageState.PLAYING).length) {
       clearTimeout(iterationHandle);
-      gameState.currentQuestion++;
+      gameState.deFactoQuestionSerialNumber++;
+      gameState.currentQuestion = getRandomIndex(gameState.dyanmicQuestionsArray.length);
       playNextQuestion();
     }
 
@@ -181,3 +182,21 @@ registerOnDisconnect(client => {
     resetGame();
   }
 });
+
+// Utils functions
+function removeCurrentQuestionFromArray() {
+  gameState.dyanmicQuestionsArray.splice(gameState.currentQuestion, 1);
+}
+
+function getRandomIndex(length) {
+  return Math.floor(Math.random() * length);
+}
+
+function getInitialGameState() {
+  return {
+    currentQuestion: getRandomIndex(questions.length),
+    deFactoQuestionSerialNumber: 0,
+    isStarted: false,
+    dyanmicQuestionsArray: [...questions]
+  };
+}
