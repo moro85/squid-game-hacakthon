@@ -42,7 +42,6 @@ export const QuestionScreen = ({ submitAnswer, question }) => {
       <QuestionDescription>{question.description}</QuestionDescription>
       <p>You have {parseInt(timeLeft) / 1000} seconds to finish</p>
       <EditorContainer>
-        <textarea value={code} onChange={({ target: { value: val } }) => setCode(val)} ></textarea>
         <Editor
           value={code}
           onValueChange={setCode}
