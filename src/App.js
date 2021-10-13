@@ -61,12 +61,7 @@ function App() {
                 playNewPlayerSound();
                 break;
               case messageState.QUESTION:
-                setCurrentQuestion({
-                  description: msg.description,
-                  timeLeft: msg.timeLeft,
-                  codeTemplate: msg.codeTemplate,
-                  qNum: msg.qNum
-                })
+                setCurrentQuestion(msg);
                 setGameStatus(GAME_STATES.STARTED);
                 break;
               case messageState.PASSED:

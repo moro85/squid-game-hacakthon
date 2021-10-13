@@ -21,7 +21,7 @@ export const QuestionScreen = ({ submitAnswer, question }) => {
   return (
     <StyledQuestionScreen>
       <StyledProgressBar width={Math.floor(timeLeft / question.timeLeft * 100) || 100}><div></div></StyledProgressBar>
-      <h3>Challange #{question.qNum + 1}:</h3>
+      <h3>{question.totalQ === question.deFactoQuestionSerialNumber + 1 ? "last challenge!" :  `Challenge #${question.deFactoQuestionSerialNumber + 1}:`}</h3>
       <QuestionDescription>{question.description || "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Distinctio accusantium vero voluptas veniam neque explicabo placeat eligendi numquam doloremque nemo?"}</QuestionDescription>
       <EditorContainer>
         <Editor
