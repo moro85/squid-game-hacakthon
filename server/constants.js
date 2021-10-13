@@ -8,14 +8,16 @@ export const messageState = {
     ELIMINATED: "Eliminated",
     GAME_OVER: "GameOver",
     PLAYER_ALREADY_JOINED: "PlayerAlreadyJoined",
-    GAME_ALREADY_STARTED: "GameAlreadyStarted"
+    GAME_ALREADY_STARTED: "GameAlreadyStarted",
+    START_GAME: "StartGame"
   };
 
 export const messageType = {
     STATUS: "Status",
     USERS: "Users",
     JOIN: "Join",
-    SUBMIT: "Submit"
+    SUBMIT: "Submit",
+    START_GAME: "StartGame"
   };
 
 export const questionTimeout = 30000 * 10;

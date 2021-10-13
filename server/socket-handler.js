@@ -42,6 +42,9 @@ wss.on("connection", function connection(ws) {
       case "Submit":
         handleSubmit(message, ws);
         break;
+      case "StartGame":
+        handleStartGame(message.playersNumber);
+        break;
       default:
         break;
     }
@@ -51,6 +54,7 @@ wss.on("connection", function connection(ws) {
 let handleDisconnect;
 let handleSubmit;
 let handleJoin;
+let handleStartGame;
 
 export function registerOnDisconnect(cb) {
   handleDisconnect = cb;
@@ -62,6 +66,10 @@ export function registerOnSubmit(cb) {
 
 export function registerOnJoin(cb) {
   handleJoin = cb;
+}
+
+export function registerStartGame(cb) {
+  handleStartGame = cb;
 }
 
 export function broadcast(message) {

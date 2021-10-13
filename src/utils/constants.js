@@ -6,13 +6,15 @@ export const messageState = {
     "GAME_OVER": "GameOver",
     "PLAYER_ALREADY_JOINED": "PlayerAlreadyJoined",
     "GAME_ALREADY_STARTED": "GameAlreadyStarted",
-    "USERS": "Users"
+    "USERS": "Users",
+    "START_GAME": "StartGame"
 }
 
 export const messageType = {
     "STATUS": "Status",
     "JOIN": "Join",
-    "SUBMIT": "Submit"
+    "SUBMIT": "Submit",
+    "START_GAME": "StartGame"
 }
 
 export const deviceType = {

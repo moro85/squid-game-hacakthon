@@ -3,13 +3,14 @@ import styled from 'styled-components'
 import './App.css';
 import './animate.css'
 import MainScreen from './screens/MainScreen';
+import AdminScreen from './screens/AdminScreen/AdminScreen';
 import GetReadyScreen from './screens/GetReadyScreen';
 import { deviceType, messageState, messageType, NEW_PLAYER_SOUND, initialPlayersStats } from './utils/constants';
 import { QuestionScreen } from './screens/QuestionScreen/QuestionScreen';
 import PassScreen from './screens/PassScreen';
 import EliminatedScreen from './screens/EliminatedScreen';
 import GameOverScreen from './screens/GameOverScreen/GameOverScreen';
-import { sendSocketMessage, socket } from './utils/socket';
+import { connectSocket, sendSocketMessage, socket } from './utils/socket';
 import ErrorScreen from './screens/ErrorScreen';
 import { useAudio } from './hooks/use-audio';
 import { useAppState } from './providers/AppStateProvider';
@@ -21,7 +22,9 @@ const GAME_STATES = {
   "PASSED": 3,
   "ELIMINATED": 4,
   "ERROR": 5,
-  "GAME_OVER": 6
+  "GAME_OVER": 6,
+  "ADMIN": 7,
+  "REFRESH_IS_NEEDED": 8
 }
 
 const Container = styled.div`
@@ -29,6 +32,12 @@ const Container = styled.div`
   height: 100vh;
   background: #FBFBFB;
 `;
+
+const isAdmin = () => {
+  const urlSearchParams = new URLSearchParams(window.location.search);
+  const params = Object.fromEntries(urlSearchParams.entries());
+  return !!params.admin;
+}
 
 function App() {
   const { setAppState, appState: { appError } } = useAppState();
@@ -47,6 +56,9 @@ function App() {
 
   useEffect(() => {
     setAppState({ deviceType: deviceType.PHONE });
+    if (isAdmin()) {
+      setGameStatus(GAME_STATES.ADMIN);
+    }
   }, [])
 
   useEffect(() => {
@@ -87,6 +99,9 @@ function App() {
                   total: msg.total
                 })
               break;
+              case messageState.START_GAME:
+                setGameStatus(GAME_STATES.REFRESH_IS_NEEDED);
+                break;
               default:
                 setGameStatus(GAME_STATES.WAITING_START);
             }
@@ -95,7 +110,8 @@ function App() {
     };
 
     socket.onclose = function (event) {
-      if (gameStatus !== GAME_STATES.ELIMINATED && gameStatus !== GAME_STATES.GAME_OVER) {
+      if (gameStatus !== GAME_STATES.ELIMINATED && gameStatus !== GAME_STATES.GAME_OVER && gameStatus !== GAME_STATES.REFRESH_IS_NEEDED) {
+        console.log("CONNECTION CLOSED")
         setGameStatus(GAME_STATES.ERROR);
       }
     }
@@ -113,16 +129,26 @@ function App() {
     }
   }
 
+  const setNewGame = (playersNumber) => {
+    sendSocketMessage(messageType.START_GAME, { playersNumber });
+  }
+
+  const onRefresh = () => {
+    connectSocket();
+    setGameStatus(GAME_STATES.WAITING);
+  }
+
   return (
     <div className="App">
       <Container>
-        {gameStatus === GAME_STATES.WAITING && <MainScreen socket={socket} players={players} startGame={(playerName) => changeGameStatus(GAME_STATES.WAITING, playerName)} />}
+        {(gameStatus === GAME_STATES.WAITING || gameStatus === GAME_STATES.REFRESH_IS_NEEDED )&& <MainScreen socket={socket} players={players} startGame={(playerName) => changeGameStatus(GAME_STATES.WAITING, playerName)} onRefresh={gameStatus === GAME_STATES.REFRESH_IS_NEEDED && onRefresh} />}
         {gameStatus === GAME_STATES.GET_READY && <GetReadyScreen />}
         {gameStatus === GAME_STATES.STARTED && <QuestionScreen question={currentQuestion} submitAnswer={submitAnswer} playersStats={playersStats} />}
         {gameStatus === GAME_STATES.PASSED && <PassScreen playerName={playerName} playersStats={playersStats} />}
         {gameStatus === GAME_STATES.ELIMINATED && <EliminatedScreen playerName={playerName} playersStats={playersStats} />}
-        {(gameStatus === GAME_STATES.ERROR || appError) && <ErrorScreen />}
+        {(gameStatus === GAME_STATES.ERROR) && <ErrorScreen />}
         {gameStatus === GAME_STATES.GAME_OVER && <GameOverScreen playersStats={playersStats} />}
+        {gameStatus === GAME_STATES.ADMIN && <AdminScreen startGame={setNewGame}/>}
       </Container>
     </div>
   );

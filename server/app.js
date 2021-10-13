@@ -12,11 +12,16 @@ import {
   broadcast,
   registerOnDisconnect,
   registerOnJoin,
+  registerStartGame,
   registerOnSubmit,
   wss
 } from "./socket-handler";
 
-let gameState = createInitialGameState();
+let gameState = {
+  currentQuestion: 0,
+  isStarted: false,
+  playersNumber: maxPlayerCount
+};
 
 function validateSubmission(code, question) {
   if (code) {
@@ -25,11 +30,17 @@ function validateSubmission(code, question) {
   return false;
 }
 
-function resetGame() {
-  gameState = createInitialGameState();
+function resetGame(playersNumber) {
+  gameState = {
+    currentQuestion: 0,
+    isStarted: false,
+    playersNumber: playersNumber || gameState.playersNumber
+  };
+  console.log("RESETTED to", gameState);
   wss.clients.forEach(c => {
     c.close();
-  })
+  });
+  wss.clients.clear();
 }
 
 function gameOver(ws) {
@@ -121,15 +132,17 @@ registerOnSubmit((message, ws) => {
     if (![...wss.clients].filter(c => c.status === messageState.PLAYING).length) {
       clearTimeout(iterationHandle);
       gameState.currentQuestion++;
-      playNextQuestion();
+      if (gameState.currentQuestion !== questions.length) {
+        playNextQuestion();
+      }
     }
 
     broadcast({
       type: messageType.USERS,
       passedUsers: [...wss.clients].filter(c => c.status === messageState.PASSED).length,
-      eliminatedUsers: maxPlayerCount - [...wss.clients].length,
+      eliminatedUsers: gameState.playersNumber - [...wss.clients].length,
       stillPlayingUsers: [...wss.clients].filter(c => c.status === messageState.PLAYING).length,
-      total: maxPlayerCount
+      total: gameState.playersNumber
     });
   }
 });
@@ -154,7 +167,7 @@ registerOnJoin((playerName, ws) => {
   } else {
     ws.playerName = playerName;
     ws.status = messageState.PLAYING;
-    if ([...wss.clients].filter(c => c.status === messageState.PLAYING).length === maxPlayerCount) {
+    if ([...wss.clients].filter(c => c.status === messageState.PLAYING).length === gameState.playersNumber) {
       gameState.isStarted = true;
       playNextQuestion();
     } else {
@@ -162,10 +175,20 @@ registerOnJoin((playerName, ws) => {
         type: messageType.STATUS,
         state: messageState.WAITING_START,
         players: [...wss.clients].map(c => c.playerName),
-        maxPlayerCount
+        maxPlayerCount: gameState.playersNumber
       });
     }
   }
+});
+
+registerStartGame((playersNumber) => {
+  broadcast({
+    type: messageType.STATUS,
+    state: messageState.START_GAME,
+  });
+  setTimeout(() => {
+    resetGame(playersNumber);
+  }, 0);
 });
 
 registerOnDisconnect(client => {
@@ -175,10 +198,3 @@ registerOnDisconnect(client => {
     resetGame();
   }
 });
-
-function createInitialGameState() {
-  return {
-    currentQuestion: 0,
-    isStarted: false,
-  };
-}

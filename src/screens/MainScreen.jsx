@@ -114,7 +114,7 @@ const PlayersWaiting = styled.p`
     }
 `;
 
-const MainScreen = ({startGame, players}) => {
+const MainScreen = ({startGame, players, onRefresh}) => {
     const { appState: { maxPlayerCount, deviceType } } = useAppState();
 
     const [waiting, setWaiting] = useState(false)
@@ -169,9 +169,10 @@ const MainScreen = ({startGame, players}) => {
     return (
         <StyledMainScreen>
             <SquidGameLogo src="./assets/sg_logo.png" alt="" isSmall={deviceType}/>
-            { !waiting && <PlayerNameInput ref={inputRef} onChange={onInputChanged} isInvalid={isInvalidPlayerName} autoComplete="false" placeholder="Enter your name" onKeyUp={onKeyUp} /> }
-            { !waiting && <JoinGamebutton type="button" disabled={isInvalidPlayerName} onClick={startGameWrapper}>Join Game</JoinGamebutton> }
-            { waiting && <GameAboutToStart>{player ? `${player}, ` : ''}The game is about to start...</GameAboutToStart>}
+            { !waiting && <PlayerNameInput ref={inputRef} onChange={onInputChanged} autoComplete="false" placeholder="Enter your name" onKeyUp={(e) => {setPlayer(e.target.value); if (e.key === "Enter") startGameWrapper() }} /> }
+            { !waiting && !onRefresh && <JoinGamebutton type="button" onClick={startGameWrapper}>Join Game</JoinGamebutton> }
+            { !waiting && onRefresh && <JoinGamebutton type="button" onClick={onRefresh}>Refresh</JoinGamebutton> }
+            { waiting && <GameAboutToStart>{player ? `${player}, ` : ''}The game about to start...</GameAboutToStart>}
             { waiting && <img src="./assets/spinner.gif" alt="spinner" />}
             { waiting && players.length!==0 && <PlayersWaiting>{players.length !== 1 ? <><span>{players.length - 1} {`player${!isSinglePlayerWaitingWithYou ? "s" : ""}`}</span> {isSinglePlayerWaitingWithYou ? 'is' : 'are'} waiting with you, game will start when all {maxPlayerCount} of you join.</> : `Welcome to lobby. you are the first one. Make yourself at home until all ${maxPlayerCount} of you join.`}</PlayersWaiting>}
             <MainScreenLog>
