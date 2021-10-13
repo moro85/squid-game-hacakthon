@@ -13,7 +13,7 @@ const StyledEliminatedScreen = styled.div`
     color: #fff;
     font-family: 'Pacifico', cursive;
     h1 {
-        font-size: 5em;
+        font-size: 3.5em;
     }
     h2 {
         margin-top: -1em;

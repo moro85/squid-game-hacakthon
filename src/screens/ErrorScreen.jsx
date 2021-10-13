@@ -13,7 +13,8 @@ const StyledErrorScreen = styled.div`
     color: #fff;
     font-family: 'Pacifico', cursive;
     h1 {
-        font-size: 5em;
+        font-size: 3em;
+        text-align: center;
         span {
             display: inline-block;
             text-align: center;
@@ -24,6 +25,7 @@ const StyledErrorScreen = styled.div`
     h2 {
         &:first-of-type {
             margin-top: -1em;
+            text-align: center;
         }
         margin-bottom: 0em;
         font-family: 'Roboto';
