@@ -21,6 +21,7 @@ const StyledEliminatedScreen = styled.div`
         margin-top: -1em;
         font-family: 'Roboto';
         font-size: 1.5em;
+        text-align: center;
     }
     img {
         transform: scale(1.4);
