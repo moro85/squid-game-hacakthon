@@ -32,8 +32,6 @@ export const StyledQuestionScreen = styled.div`
         margin-bottom: 2.5em;
     }
     textarea {
-        width: 500px;
-        height: 300px;
         background-color: #fff;
         padding: 1em;
         border-radius: 8px;
@@ -42,6 +40,7 @@ export const StyledQuestionScreen = styled.div`
         font-family: 'Roboto';
         font-size: 1.25em;
         margin-bottom: 2em;
+        overflow: auto;
     }
 `;
 
@@ -60,12 +59,13 @@ export const StyledQuestionSubmitButton = styled.button`
 export const EditorContainer = styled.div`
     background: #000;
     width: 30rem;
-    height: 10rem;
+    height: 20rem;
     border-radius: 4px;
   
   .token.operator {
     background: #000;
   }
+
 `;
 
 export const StyledProgressBar = styled.div`

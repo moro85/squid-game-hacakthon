@@ -1,5 +1,4 @@
 import React, { createContext, useState, useContext } from 'react';
-import produce from 'immer';
 import { deviceType } from '../utils/constants';
 
 export const initialAppState = {
