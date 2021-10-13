@@ -118,7 +118,7 @@ const MainScreen = ({startGame, players}) => {
     const { appState: { maxPlayerCount, deviceType } } = useAppState();
 
     const [waiting, setWaiting] = useState(false)
-    const [isInvalidPlayerName, setIsInvalidPlayerName] = useState(false)
+    const [isInvalidPlayerName, setIsInvalidPlayerName] = useState(true)
     const [player, setPlayer] = useState("");
     const { setPlaying: shouldPlayScarySound, playing } = useAudio(SCARY_TUNE);
 
