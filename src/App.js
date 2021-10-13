@@ -119,7 +119,7 @@ function App() {
         {gameStatus === GAME_STATES.WAITING && <MainScreen socket={socket} players={players} startGame={(playerName) => changeGameStatus(GAME_STATES.WAITING, playerName)} />}
         {gameStatus === GAME_STATES.GET_READY && <GetReadyScreen />}
         {gameStatus === GAME_STATES.STARTED && <QuestionScreen question={currentQuestion} submitAnswer={submitAnswer} playersStats={playersStats} />}
-        {gameStatus === GAME_STATES.PASSED && <PassScreen playersStats={playersStats} />}
+        {gameStatus === GAME_STATES.PASSED && <PassScreen playerName={playerName} playersStats={playersStats} />}
         {gameStatus === GAME_STATES.ELIMINATED && <EliminatedScreen playerName={playerName} playersStats={playersStats} />}
         {(gameStatus === GAME_STATES.ERROR || appError) && <ErrorScreen />}
         {gameStatus === GAME_STATES.GAME_OVER && <GameOverScreen playersStats={playersStats} />}

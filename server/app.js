@@ -16,10 +16,7 @@ import {
   wss
 } from "./socket-handler";
 
-let gameState = {
-  currentQuestion: 0,
-  isStarted: false
-};
+let gameState = createInitialGameState();
 
 function validateSubmission(code, question) {
   if (code) {
@@ -29,10 +26,7 @@ function validateSubmission(code, question) {
 }
 
 function resetGame() {
-  gameState = {
-    currentQuestion: 0,
-    isStarted: false
-  };
+  gameState = createInitialGameState();
   wss.clients.forEach(c => {
     c.close();
   })
@@ -181,3 +175,10 @@ registerOnDisconnect(client => {
     resetGame();
   }
 });
+
+function createInitialGameState() {
+  return {
+    currentQuestion: 0,
+    isStarted: false,
+  };
+}
