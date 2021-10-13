@@ -28,12 +28,14 @@ const StyledEliminatedScreen = styled.div`
     }
 `;
 
-const EliminatedScreen = ({ playerName, playerLeftNumber }) => {
+const animationClasses = 'animate__animated animate__fadeInDown';
+
+const EliminatedScreen = ({ playersStats: { eliminatedUsers }, playerName }) => {
+    const crematoriumText = `${eliminatedUsers} players are waiting for you at the crematorium 🔥⚰️🔥️`;
     return (
         <StyledEliminatedScreen>
-            <h1 className="animate__animated animate__fadeInDown">Eliminated! <br/> 💀</h1>
-            <h2 className="animate__animated animate__fadeInDown">{playerLeftNumber} left!</h2>
-            <h2 className="animate__animated animate__fadeInDown">You were player {playerName}</h2>
+            <h1 className={animationClasses}>{`${playerName} Eliminated!`} <br/> 💀</h1>
+            <h2 className={animationClasses}>{ crematoriumText }</h2>
             <img src="./assets/operator.png" alt=""/>
         </StyledEliminatedScreen>
     )
