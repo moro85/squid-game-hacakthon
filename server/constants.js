@@ -44,8 +44,23 @@ export const questions = [
     codeTemplate: "(arr) => {\n  \n}"
   },
   {
-    description: "Write a function that accepts a string and returns s",
+    description: "Write a function that accepts a string and reverse it!",
     validators: [code => runCodeIsolated(code, `"string"`) === "gnirts"],
     codeTemplate: "(str) => {\n  \n}"
-  }
-];
+  },
+  {
+    description: "Write a the constant function the returns the number 42",
+    validators: [code => runCodeIsolated(code, `"string"`) === 42],
+    codeTemplate: "() => {\n  \n}"
+  },
+  {
+    description: "Write a function that accepts an array and return its sum",
+    validators: [code => runCodeIsolated(code, `[1,2,3]`) === 6],
+    codeTemplate: "(arr) => {\n  \n}"
+  },
+  {
+    description: "Write a function that accepts number and returns how many digit it includes",
+    validators: [code => runCodeIsolated(code, `123`) === 3],
+    codeTemplate: "(num) => {\n  \n}"
+  },
+].sort(() => 0.5 - Math.random());
