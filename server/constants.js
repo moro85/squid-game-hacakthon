@@ -71,4 +71,9 @@ export const questions = [
     validators: [code => runCodeIsolated(code, `https://www.google.com/search?val=mock`) === 'google'],
     codeTemplate: "(url) => {\n return ''; \n}"
   },
+  {
+    description: "Write a function that accepts a string and a delimiter and returns the substring which starts from the first delimiter and ends with the last",
+    validators: [code => runCodeIsolated(code, `some#mock#string`) === 'google'],
+    codeTemplate: "(str, delimiter) => {\n return ''; \n}"
+  },
 ].sort(() => 0.5 - Math.random());
