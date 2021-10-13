@@ -36,7 +36,7 @@ const EliminatedScreen = ({ playersStats: { eliminatedUsers }, playerName }) => 
     return (
         <StyledEliminatedScreen>
             <h1 className={animationClasses}>Eliminated! <br/> 💀</h1>
-            <h2 className={animationClasses}>{ crematoriumText }</h2>
+            <h2 className={animationClasses}>{ crematoriumText } <br/> 🔥⚰️🔥️</h2>
             <img src="./assets/operator.png" alt=""/>
         </StyledEliminatedScreen>
     )
