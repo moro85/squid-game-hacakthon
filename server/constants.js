@@ -75,7 +75,12 @@ export const questions = [
   },
   {
     description: "Write a function that accepts a string and a delimiter and returns the substring which starts from the first delimiter and ends with the last",
-    validators: [code => runCodeIsolated(code, `some#mock#string`) === 'mock'],
-    codeTemplate: "(str, delimiter) => {\n   return '';\n}"
+    validators: [code => runCodeIsolated(code, `"some#mock#string"`) === 'mock'],
+    codeTemplate: "(str, delimiter) => {\n   return ;\n}"
   },
-].sort(() => 0.5 - Math.random());
+  {
+    description: "Calculate the n'th element in Fibonnacy series",
+    validators: [code => runCodeIsolated(code, `7`) === '13'],
+    codeTemplate: "(n) => {\n   return ;\n}"
+  },
+].sort(() => 0.5 - Math.random()).slice(0, 3);
