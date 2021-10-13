@@ -63,3 +63,20 @@ export const EditorContainer = styled.div`
     background: #000;
   }
 `;
+
+export const StyledProgressBar = styled.div`
+  width: 100%;
+  height: 1.875rem;
+  position: absolute;
+  top: 0;
+  display: flex;
+  > div {
+    background: ${({ width }) => width < 50 ? 'yellow' : width < 25 ? 'red' : '#fff'};
+    width: ${({ width }) => width}%;
+    transition: .18s all;
+  }
+`;
+
+export const QuestionDescription = styled.h2`
+  width: 60%;
+`;
