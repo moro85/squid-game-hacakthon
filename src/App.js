@@ -15,12 +15,6 @@ import { useAudio } from './hooks/use-audio';
 import { useAppState } from './providers/AppStateProvider';
 import { useMediaQuery } from 'beautiful-react-hooks'; 
 
-const Container = styled.div`
-  width: 1200px;
-  height: 700px;
-  background: #FBFBFB;
-`;
-
 const GAME_STATES = {
   "WAITING": 0,
   "GET_READY": 1,
@@ -102,9 +96,16 @@ function App() {
     setWaiting(true);
   }
 
+
+  const Container = styled.div`
+    width: ${({isSmall}) => isSmall ? '100%' : '1200px'};
+    height: ${({isSmall}) => isSmall ? '100vh' : '700px'};
+    background: #FBFBFB;
+  `;
+
   return (
     <div className="App">
-      <Container>
+      <Container isSmall={isSmall}>
         {gameStatus === GAME_STATES.WAITING && <MainScreen socket={socket} players={players} startGame={(setWaiting, playerName) => changeGameStatus(GAME_STATES.WAITING, setWaiting, playerName)} />}
         {gameStatus === GAME_STATES.GET_READY && <GetReadyScreen />}
         {gameStatus === GAME_STATES.STARTED && <QuestionScreen question={currentQuestion} submitAnswer={submitAnswer} />}
