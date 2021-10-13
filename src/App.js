@@ -33,6 +33,7 @@ const Container = styled.div`
 function App() {
   const { setAppState, appState: { appError } } = useAppState();
   const [gameStatus, setGameStatus] = useState(GAME_STATES.WAITING);
+  const [playerName, setPlayerName] = useState('Player');
   const [players, setPlayers] = useState([]);
   const [playersStats, setPlayersStats] = useState(initialPlayersStats);
   const [currentQuestion, setCurrentQuestion] = useState({});
@@ -100,6 +101,7 @@ function App() {
   }, [gameStatus, playNewPlayerSound])
 
   const changeGameStatus = (newGameStatus, playerName) => {
+    setPlayerName(playerName);
     setGameStatus(newGameStatus);
     if (!sendSocketMessage(messageType.JOIN, {playerName})) {
       setAppState({appError: true})
@@ -113,7 +115,7 @@ function App() {
         {gameStatus === GAME_STATES.GET_READY && <GetReadyScreen />}
         {gameStatus === GAME_STATES.STARTED && <QuestionScreen question={currentQuestion} submitAnswer={submitAnswer} playersStats={playersStats} />}
         {gameStatus === GAME_STATES.PASSED && <PassScreen playersStats={playersStats} />}
-        {gameStatus === GAME_STATES.ELIMINATED && <EliminatedScreen playerName={456} playersStats={playersStats} />}
+        {gameStatus === GAME_STATES.ELIMINATED && <EliminatedScreen playerName={playerName} playersStats={playersStats} />}
         {(gameStatus === GAME_STATES.ERROR || appError) && <ErrorScreen />}
         {gameStatus === GAME_STATES.GAME_OVER && <GameOverScreen playersStats={playersStats} />}
       </Container>
