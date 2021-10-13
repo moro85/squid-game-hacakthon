@@ -151,11 +151,11 @@ const MainScreen = ({startGame, players}) => {
             { !waiting && <JoinGamebutton type="button" onClick={startGameWrapper}>Join Game</JoinGamebutton> }
             { waiting && <GameAboutToStart>{player ? `${player}, ` : ''}Game about to start...</GameAboutToStart>}
             { waiting && <img src="./assets/spinner.gif" alt="spinner" />}
-            { waiting && players.length && <PlayersWaiting>{players.length !== 1 ? <><span>{players.length - 1} {`player${!isSinglePlayerWaitingWithYou ? "s" : ""}`}</span> {isSinglePlayerWaitingWithYou ? 'is' : 'are'} waiting with you, until all {maxPlayerCount} of you join.</> : `Welcome to lobby. you are the first one. Make yourself at home until all ${maxPlayerCount} of you join.`}</PlayersWaiting>}
+            { waiting && players.length!==0 && <PlayersWaiting>{players.length !== 1 ? <><span>{players.length - 1} {`player${!isSinglePlayerWaitingWithYou ? "s" : ""}`}</span> {isSinglePlayerWaitingWithYou ? 'is' : 'are'} waiting with you, game will start when all {maxPlayerCount} of you join.</> : `Welcome to lobby. you are the first one. Make yourself at home until all ${maxPlayerCount} of you join.`}</PlayersWaiting>}
             <MainScreenLog>
                 <ul>
                     {players && players.slice(-2).map((v)=>
-                        (<li key={v} className="animate__animated animate__bounceIn">Player {(v < 100 && v > 10) ? `0${v}` : (v < 10) ? `00${v}` : v} Joined</li>)
+                        (v && <li key={v} className="animate__animated animate__bounceIn">Player {(v < 100 && v > 10) ? `0${v}` : (v < 10) ? `00${v}` : v} Joined</li>)
                     )}
                 </ul>
             </MainScreenLog>
