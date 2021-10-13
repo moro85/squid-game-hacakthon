@@ -18,7 +18,7 @@ export const messageType = {
   };
 
 export const questionTimeout = 30000;
-export const maxPlayerCount = 1;
+export const maxPlayerCount = 4;
 
 function runCodeIsolated(code, params) {
     try {

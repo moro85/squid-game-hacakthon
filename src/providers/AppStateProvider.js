@@ -3,7 +3,8 @@ import { deviceType } from '../utils/constants';
 
 export const initialAppState = {
   maxPlayerCount: null,
-  deviceType: deviceType.PHONE
+  deviceType: deviceType.PHONE,
+  appError: false
 };
 
 const StateContext = createContext({});

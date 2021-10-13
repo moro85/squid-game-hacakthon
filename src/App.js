@@ -31,7 +31,7 @@ const Container = styled.div`
 `;
 
 function App() {
-  const { setAppState } = useAppState();
+  const { setAppState, appState: { appError } } = useAppState();
   const [gameStatus, setGameStatus] = useState(GAME_STATES.WAITING);
   const [players, setPlayers] = useState([]);
   const [winners, setWinners] = useState([]);
@@ -92,11 +92,17 @@ function App() {
         setGameStatus(GAME_STATES.ERROR);
       }
     }
+
+    socket.onerror = function (event) {
+        setGameStatus(GAME_STATES.ERROR);
+    }
   }, [gameStatus, playNewPlayerSound])
 
   const changeGameStatus = (newGameStatus, playerName) => {
     setGameStatus(newGameStatus);
-    sendSocketMessage(messageType.JOIN, {playerName});
+    if (!sendSocketMessage(messageType.JOIN, {playerName})) {
+      setAppState({appError: true})
+    }
   }
 
   return (
@@ -107,7 +113,7 @@ function App() {
         {gameStatus === GAME_STATES.STARTED && <QuestionScreen question={currentQuestion} submitAnswer={submitAnswer} />}
         {gameStatus === GAME_STATES.PASSED && <PassScreen playerLeftNumber={30} playerEliminatedNumber={5}/>}
         {gameStatus === GAME_STATES.ELIMINATED && <EliminatedScreen playerName={456} playerLeftNumber={20}/>}
-        {gameStatus === GAME_STATES.ERROR && <ErrorScreen />}
+        {(gameStatus === GAME_STATES.ERROR || appError) && <ErrorScreen />}
         {gameStatus === GAME_STATES.GAME_OVER && <GameOverScreen winners={winners} />}
       </Container>
     </div>

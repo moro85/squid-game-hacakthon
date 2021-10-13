@@ -23,9 +23,8 @@ const StyledEliminatedScreen = styled.div`
         font-size: 1.5em;
     }
     img {
-        position: absolute;
-        bottom: 5em;
         transform: scale(1.4);
+        margin-top: 5em;
     }
 `;
 
