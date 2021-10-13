@@ -83,6 +83,7 @@ const PlayerNameInput = styled.input`
 
 const GameAboutToStart = styled.div`
     font-size: 2rem;
+    text-align: center;
 `;
 
 const Persons = styled.div`
@@ -136,7 +137,8 @@ const MainScreen = ({startGame, players}) => {
     
     const startGameWrapper = () => {
         shouldPlayScarySound(false);
-        return startGame(setWaiting, player);
+        setWaiting(true);
+        return startGame(player);
     };
     
     const isSinglePlayerWaitingWithYou = players.length === 2;
@@ -145,7 +147,7 @@ const MainScreen = ({startGame, players}) => {
         <StyledMainScreen>
             <SquidGameLogo src="./assets/sg_logo.png" alt="" isSmall={deviceType}/>
             { !waiting && <PlayerNameInput ref={inputRef} onChange={onInputChanged} autoComplete="false" placeholder="Enter your name" onKeyUp={(e) => {setPlayer(e.target.value); if (e.key === "Enter") startGameWrapper() }} /> }
-            { !waiting && <JoinGamebutton onClick={startGameWrapper}>Join Game</JoinGamebutton> }
+            { !waiting && <JoinGamebutton type="button" onClick={startGameWrapper}>Join Game</JoinGamebutton> }
             { waiting && <GameAboutToStart>{player ? `${player}, ` : ''}Game about to start...</GameAboutToStart>}
             { waiting && <img src="./assets/spinner.gif" alt="spinner" />}
             { waiting && players.length && <PlayersWaiting>{players.length !== 1 ? <><span>{players.length - 1} {`player${!isSinglePlayerWaitingWithYou ? "s" : ""}`}</span> {isSinglePlayerWaitingWithYou ? 'is' : 'are'} waiting with you, until all {maxPlayerCount} of you join.</> : `Welcome to lobby. you are the first one. Make yourself at home until all ${maxPlayerCount} of you join.`}</PlayersWaiting>}

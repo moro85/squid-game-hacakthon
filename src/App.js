@@ -24,6 +24,12 @@ const GAME_STATES = {
   "GAME_OVER": 6
 }
 
+const Container = styled.div`
+  width: 100vw;
+  height: 100vh;
+  background: #FBFBFB;
+`;
+
 function App() {
   const { setAppState } = useAppState();
   const [gameStatus, setGameStatus] = useState(GAME_STATES.WAITING);
@@ -88,23 +94,15 @@ function App() {
     }
   }, [gameStatus, playNewPlayerSound])
 
-  const changeGameStatus = (newGameStatus, setWaiting, playerName) => {
+  const changeGameStatus = (newGameStatus, playerName) => {
     setGameStatus(newGameStatus);
     sendSocketMessage(messageType.JOIN, {playerName});
-    setWaiting(true);
   }
-
-
-  const Container = styled.div`
-    width: 100vw;
-    height: 100vh;
-    background: #FBFBFB;
-  `;
 
   return (
     <div className="App">
       <Container>
-        {gameStatus === GAME_STATES.WAITING && <MainScreen socket={socket} players={players} startGame={(setWaiting, playerName) => changeGameStatus(GAME_STATES.WAITING, setWaiting, playerName)} />}
+        {gameStatus === GAME_STATES.WAITING && <MainScreen socket={socket} players={players} startGame={(playerName) => changeGameStatus(GAME_STATES.WAITING, playerName)} />}
         {gameStatus === GAME_STATES.GET_READY && <GetReadyScreen />}
         {gameStatus === GAME_STATES.STARTED && <QuestionScreen question={currentQuestion} submitAnswer={submitAnswer} />}
         {gameStatus === GAME_STATES.PASSED && <PassScreen playerLeftNumber={30} playerEliminatedNumber={5}/>}
