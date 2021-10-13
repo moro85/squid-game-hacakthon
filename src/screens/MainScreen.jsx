@@ -17,7 +17,7 @@ const StyledMainScreen = styled.div`
 `;
 
 const SquidGameLogo = styled.img`
-    width: 42%;
+    height: 150px;
 `;
 
 const JoinGamebutton = styled.button`
@@ -144,7 +144,7 @@ const MainScreen = ({startGame, players}) => {
 
     return (
         <StyledMainScreen>
-            <SquidGameLogo src="./assets/sg_logo.png" alt="" />
+            <SquidGameLogo src="./assets/sg_logo.png" alt="" isSmall={deviceType}/>
             { !waiting && <PlayerNameInput ref={inputRef} onChange={onInputChanged} autoComplete="false" placeholder="Enter your name" onKeyUp={(e) => {setPlayer(e.target.value); if (e.key === "Enter") startGameWrapper() }} /> }
             { !waiting && <JoinGamebutton onClick={startGameWrapper}>Join Game</JoinGamebutton> }
             { waiting && <GameAboutToStart>{player ? `${player}, ` : ''}Game about to start...</GameAboutToStart>}
