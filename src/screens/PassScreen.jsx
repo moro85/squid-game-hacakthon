@@ -4,12 +4,12 @@ import { colors } from '../utils/colors';
 
 const StyledPassScreen = styled.div`
     display: flex;
-    justify-content: flex-start;
+    justify-content: center;
     align-items: center;
     flex-direction: column;
     height: 100%;
     padding: 1em;
-    background: ${colors.squidGameLight};
+    background: ${colors.squidGamePink};
     color: #fff;
     font-family: 'Pacifico', cursive;
     h1 {
@@ -21,20 +21,20 @@ const StyledPassScreen = styled.div`
         margin-top: -1em;
         font-family: 'Roboto';
         font-size: 1.5em;
+        padding: .5em;
+        text-align: center;
     }
     img {
-        position: absolute;
-        bottom: 5em;
-        transform: scale(1.4);
+        
     }
 `;
 
 const PassScreen = ({ playerLeftNumber, playerEliminatedNumber }) => {
     return (
-        <StyledPassScreen className="animate__animated animate__zoomInLeft">
-            <h1>You Passed! <br/> 💵</h1>
-            <h2>Waiting for all players to submit or fail to continue to the next round...</h2>
-            <img src="./assets/spinner_white.gif" alt="" />
+        <StyledPassScreen>
+            <h1 className="animate__animated animate__fadeInDown">You Passed! <br/> 💵</h1>
+            <h2 className="animate__animated animate__fadeInDown">Waiting for all players to submit or fail to continue to the next round...</h2>
+            <img className="animate__animated animate__fadeInDown" src="./assets/spinner_white.gif" alt="" />
         </StyledPassScreen>
     )
 }

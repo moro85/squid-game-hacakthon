@@ -74,12 +74,12 @@ const PlayerNameInput = styled.input`
     text-align: center;
     padding: 0.4rem;
     border-bottom: 0.15rem solid ${colors.squidGamePink};
-    font-size: 2rem;
+    font-size: 1.5rem;
     border-top-right-radius: 8px;
     border-top-left-radius: 8px;
     background-color: transparent;
     color: ${colors.squidGameDark};
-    width: 50%;
+    width: 85%;
 `;
 
 const GameAboutToStart = styled.div`
@@ -159,14 +159,14 @@ const MainScreen = ({startGame, players}) => {
                     )}
                 </ul>
             </MainScreenLog>
-            { waiting && <Persons>
+            { /** waiting && <Persons>
                 {players.map((v)=>
                         <Person src={`./assets/person${Math.round(Math.random() * (4 - 1)) + 1}.png`} key={JSON.stringify(v)} x={
                         Math.floor(Math.random() * (1100 - 0) + 0)
                         } shouldFlip={Math.round(Math.random() * (1 - 0)) + 1} alt="" />
                     )
                 }
-            </Persons>}
+            </Persons> **/ }
         </StyledMainScreen>
     )
 }
