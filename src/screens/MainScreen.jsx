@@ -21,12 +21,14 @@ const SquidGameLogo = styled.img`
 `;
 
 const JoinGamebutton = styled.button`
-    height: 5rem;
     background: ${colors.squidGamePink};
-    border-radius: 28px;
+    border-radius: 1.5rem;
     color: #fff;
     border: 0;
-    font-size: 5rem;
+    font-size: 5em;
+    padding-left: 3rem;
+    padding-right: 3rem;
+    margin: 2rem;
     cursor: pointer;
     transition: .18s all;
     &:hover {
@@ -71,9 +73,9 @@ const PlayerNameInput = styled.input`
     border: 0;
     outline: none;
     text-align: center;
-    padding: .5em;
-    border-bottom: 3px solid ${colors.squidGamePink};
-    font-size: 2.5rem;
+    padding: 0.4rem;
+    border-bottom: 0.15rem solid ${colors.squidGamePink};
+    font-size: 2rem;
     border-top-right-radius: 8px;
     border-top-left-radius: 8px;
     background-color: transparent;
@@ -100,7 +102,8 @@ const Person = styled.img`
 `;
 
 const PlayersWaiting = styled.p`
-    width: 50rem;
+    width: 70vw;
+    text-align: center;
     font-size: 1.75rem;
     margin-top: .5em;
     span {
