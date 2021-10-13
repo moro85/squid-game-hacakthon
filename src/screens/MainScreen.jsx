@@ -8,7 +8,7 @@ import { SCARY_TUNE } from '../utils/constants';
 
 const StyledMainScreen = styled.div`
     display: flex;
-    justify-content: flex-start;
+    justify-content: center;
     align-items: center;
     flex-direction: column;
     padding: 1em;
@@ -26,8 +26,7 @@ const JoinGamebutton = styled.button`
     color: #fff;
     border: 0;
     font-size: 2em;
-    padding-left: 3rem;
-    padding-right: 3rem;
+    padding: .5em 1em;
     margin: 2rem;
     cursor: pointer;
     transition: .18s all;
@@ -40,7 +39,7 @@ const MainScreenLog = styled.div`
     width: 300px;
     font-size: 18px;
     color: ${colors.lightGray};
-    margin-top: 2em;§
+    margin-top: 2em;
     position: relative;
     ul {
         list-style-type: none;

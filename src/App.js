@@ -26,7 +26,7 @@ const GAME_STATES = {
 
 function App() {
   const { setAppState } = useAppState();
-  const [gameStatus, setGameStatus] = useState(GAME_STATES.WAITING);
+  const [gameStatus, setGameStatus] = useState(GAME_STATES.STARTED);
   const [players, setPlayers] = useState([]);
   const [winners, setWinners] = useState([]);
   const [currentQuestion, setCurrentQuestion] = useState({});
@@ -96,9 +96,11 @@ function App() {
 
 
   const Container = styled.div`
-    width: 926px;
-    height: 428px;
+    width: 428px;
+    height: 926px;
     background: #FBFBFB;
+    transform: scale(0.8);
+    border-radius: 2em;
   `;
 
   return (

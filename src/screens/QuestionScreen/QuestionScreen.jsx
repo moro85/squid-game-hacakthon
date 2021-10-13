@@ -8,8 +8,8 @@ import "prismjs/themes/prism.css";
 import { StyledQuestionScreen, StyledQuestionSubmitButton, EditorContainer, StyledProgressBar, QuestionDescription } from './StyledQuestionScreen';
 
 export const QuestionScreen = ({ submitAnswer, question }) => {
-  const [code, setCode] = useState(question.codeTemplate);
-  const [timeLeft, setTimeLeft] = useState(question.timeLeft || 0);
+  const [code, setCode] = useState(question?.codeTemplate || "");
+  const [timeLeft, setTimeLeft] = useState(question.timeLeft || 30000);
 
   useEffect(() => {
     setCursorAtMiddleOfText();
@@ -20,9 +20,9 @@ export const QuestionScreen = ({ submitAnswer, question }) => {
 
   return (
     <StyledQuestionScreen>
-      <StyledProgressBar width={Math.floor(timeLeft / question.timeLeft * 100)}><div></div></StyledProgressBar>
+      <StyledProgressBar width={Math.floor(timeLeft / question.timeLeft * 100) || 100}><div></div></StyledProgressBar>
       <h3>Challange #1:</h3>
-      <QuestionDescription>{question.description}</QuestionDescription>
+      <QuestionDescription>{question.description || "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Distinctio accusantium vero voluptas veniam neque explicabo placeat eligendi numquam doloremque nemo?"}</QuestionDescription>
       <p>You have {parseInt(timeLeft) / 1000} seconds to finish</p>
       <EditorContainer>
         <Editor
