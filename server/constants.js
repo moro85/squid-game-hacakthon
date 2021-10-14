@@ -33,7 +33,7 @@ function runCodeIsolated(code, params) {
       console.log({code});
       console.log({params});
 
-      return eval(`(${code})(${params})`);
+      return vm.run(`(${code})(${params})`);
     } catch (error) {
       console.log(error);
     }
@@ -42,22 +42,22 @@ function runCodeIsolated(code, params) {
   }
 
 export const questions = [
-  {
-    description:
-      "Write a function that accepts an array of native numbers as a parameter and returns the sum of multiplication of every two adjacent cells",
-    validators: [code => runCodeIsolated(code, `[1,2,3]`) === 8],
-    codeTemplate: "(arr) => {\n   return 5;\n}"
-  },
+  // {
+  //   description:
+  //     "Write a function that accepts an array of native numbers as a parameter and returns the sum of multiplication of every two adjacent cells",
+  //   validators: [code => runCodeIsolated(code, `[1,2,3]`) === 8],
+  //   codeTemplate: "(arr) => {\n   return 5;\n}"
+  // },
   {
     description: "Write a function that accepts a string and reverse it!",
     validators: [code => runCodeIsolated(code, `"string"`) === "gnirts"],
     codeTemplate: "(str) => {\n   return '';\n}"
   },
-  {
-    description: "Write the constant function which always returns the number 42",
-    validators: [code => runCodeIsolated(code, `"string"`) === 42],
-    codeTemplate: "() => {\n   return 42;\n}"
-  },
+  // {
+  //   description: "Write the constant function which always returns the number 42",
+  //   validators: [code => runCodeIsolated(code, `"string"`) === 42],
+  //   codeTemplate: "() => {\n   return 42;\n}"
+  // },
   {
     description: "Write a function that accepts an array and return its sum",
     validators: [code => runCodeIsolated(code, `[1,2,3]`) === 6],
@@ -68,19 +68,19 @@ export const questions = [
     validators: [code => runCodeIsolated(code, `123`) === 3],
     codeTemplate: "(num) => {\n   return 5;\n}"
   },
-  {
-    description: "Write a function that accepts a url as a string and returns only the domain name",
-    validators: [code => runCodeIsolated(code, `https://www.google.com/search?val=mock`) === 'google'],
-    codeTemplate: "(url) => {\n   return '';\n}"
-  },
-  {
-    description: "Write a function that accepts a string and a delimiter and returns the substring which starts from the first delimiter and ends with the last",
-    validators: [code => runCodeIsolated(code, `"some#mock#string"`) === 'mock'],
-    codeTemplate: "(str, delimiter) => {\n   return ;\n}"
-  },
-  {
-    description: "Calculate the n'th element in Fibonnacy series",
-    validators: [code => runCodeIsolated(code, `7`) === '13'],
-    codeTemplate: "(n) => {\n   return ;\n}"
-  },
+  // {
+  //   description: "Write a function that accepts a url as a string and returns only the domain name",
+  //   validators: [code => runCodeIsolated(code, `https://www.google.com/search?val=mock`) === 'google'],
+  //   codeTemplate: "(url) => {\n   return '';\n}"
+  // },
+  // {
+  //   description: "Write a function that accepts a string and a delimiter and returns the substring which starts from the first delimiter and ends with the last",
+  //   validators: [code => runCodeIsolated(code, `"some#mock#string"`) === 'mock'],
+  //   codeTemplate: "(str, delimiter) => {\n   return ;\n}"
+  // },
+  // {
+  //   description: "Calculate the n'th element in Fibonnacy series",
+  //   validators: [code => runCodeIsolated(code, `7`) === '13'],
+  //   codeTemplate: "(n) => {\n   return ;\n}"
+  // },
 ].sort(() => 0.5 - Math.random()).slice(0, 3);
